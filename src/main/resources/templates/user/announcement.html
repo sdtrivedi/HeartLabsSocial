@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Heart Lab</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	th:src="@{/js/jquery.min.js}"></script>
+<script	th:src="@{/js/bootstrap.min.js}"></script>
+
+<style>
+
+
+	
+</style>
+<script>
+		$(document).ready(function() {	
+			$('.read-more').on('click', function() {
+				  
+				var announcementId = $(this).parent().siblings()[0];
+				var content = $(this).parent().siblings()[2];
+				$(this).toggle();
+				$(content).toggle();
+				var msg_id = $(announcementId).val();
+				
+				 $.post("/user/readnotification",
+				  {
+				              id : msg_id
+				          
+				  });
+				  
+			});
+		});
+		
+			
+</script>
+</head>
+
+<body>
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px">
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12 container">
+	
+		<div class="col-md-12" style="padding-top:20px;">
+				
+		    <div class="col-sm-offset-1 col-sm-10">
+		  
+				<div class="col-sm-12">
+				
+					
+				      <div class="col-sm-12" th:each="announcement,itr  : ${previousAnnoucements}">
+				      	
+				       <div class="space" style="background-color:  lightblue;padding:5px; ">
+				        	<b>#<span  th:text="${itr.index+1}"></span>
+				        	<span th:if="${announcement.type==1}">
+				        		Announcement
+				        	</span>
+				        	<span th:if="${announcement.type==2}">
+				        		Message
+				        	</span>
+				        	</b>
+				        	<b class="pull-right">
+				        		 <span>Sent:</span> <span  th:text="${#dates.format(announcement.sentTimeStamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+				        	</b>
+				        	
+				        	
+				        </div>
+				     
+				        <div class="space text-justify" style="background-color: #e8f4f9; padding:15px;">
+				        	<b> Sender:
+				        		<span th:text="${announcement.sender.name}">
+				        		</span>
+				        		<span th:text="${announcement.sender.lastName}">
+				        		</span>
+				        		<a class="read-more">Read More..</a>
+				        	</b>
+				        	<input type="hidden" name="messageid"  th:value="${announcement.messageId}"/>
+				        	<br>
+				        	<span style="display:none" th:utext="${announcement.messageContent}"></span>
+				        </div>
+				       
+				     
+				       
+				      </div>
+						  
+				</div>
+			</div>   
+			</div>
+			
+			
+		</div>
+
+	
+</div>
+
+</body>
+</html>

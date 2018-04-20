@@ -1,0 +1,56 @@
+.admin-message-text {
+	font-style: normal;
+	font-size: 22px;
+	color: #004080;
+}
+
+.mood-box
+{
+	border: 5px solid #c60d70;
+	font-weight: bold;
+	font-size: 20px;
+	border-radius: 15px;
+	
+	padding: 10px;
+	margin-top:5px;
+	margin-bottom:10px;
+}
+
+.link{
+	font-size: 20px;
+	font-weight: bold;
+}
+.caption-span
+{
+	font-size: 20px;
+	font-weight: bold;
+	margin:10px 0px;
+}
+#newsfeed-div{
+		
+  height: 600px;
+  overflow-y: auto; 
+}
+
+p span 
+	{
+		display: block;
+	}
+	.title{
+		color:#c60d70;
+		font-weight: bold;
+		font-size:45px;
+	}
+	.space
+	{
+		margin-top:15px;
+		margin-bottom:15px;
+	}
+	.panel-body {
+	  
+	  height: 500px;
+	  overflow-y: auto; 
+	}
+	
+		
+	

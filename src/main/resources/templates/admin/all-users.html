@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Admin Page</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	th:src="@{/js/jquery.min.js}"></script>
+<script	th:src="@{/js/bootstrap.min.js}"></script>
+<style>
+
+		.containe  {
+	    position: relative;
+	    width: 100%;
+	    max-width: 400px;
+	}
+	
+
+	
+</style>
+
+</head>
+
+<body>
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" >
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12 container">
+	
+		<div class="col-md-12" style="padding-top:20px;">
+			
+
+				<div th:if="${viewname=='userprofile'}">
+				 <div class="col-sm-7">
+					<div class="panel panel-info" >
+						<div class="panel-heading">
+							<span>User Profile</span>
+						</div>
+						<div class="panel-body">
+							 <div class="col-sm-6" style="font-size: 18px;">
+								<div class="col-sm-12 space">
+									<span>First Name :&nbsp</span>
+									
+									<span th:text=" ${userObject.name}">
+									</span>
+									
+								</div>
+								<div class="col-sm-12 space">
+									<span>Last Name :&nbsp</span>
+									
+									<span th:text=" ${userObject.lastName}">
+									</span>
+									
+								</div>
+								<div class="col-sm-12 space">
+									
+									<span>Email :&nbsp</span>
+									
+									<span th:text=" ${userObject.email}">
+									</span>
+									
+								</div>
+								<div class="col-sm-12 space">
+									<span>Type :</span>&nbsp<span th:text="${userObject.roles.get(0).role}"></span>
+								</div>
+								<div class="col-sm-12 space">
+									<span th:if="${userObject.active==1}">
+										<a class="btn btn-danger" th:href="@{/admin/activateUser(username=${userObject.email},active=2)}">
+										Deactivate
+										</a>
+									</span>
+									<span th:if="${userObject.active==2}">
+										<a class="btn btn-info" th:href="@{/admin/activateUser(username=${userObject.email},active=1)}">
+										Activate
+										</a>
+									</span>
+								</div>
+								
+							</div>
+							<div class="col-sm-6">
+								<form th:action="@{/admin/sendMessage}" method="POST" class="form-signin">
+									<div>Send personal message to&nbsp<span style="font-weight: bold" th:text=" ${userObject.name}"></span></div>
+									<textarea name="message" cols="30" rows="6"></textarea>
+									<input type="hidden" name="receiverid"  th:value="${userObject.id}"/>
+									<input type="hidden" name="senderid"  th:value="${currentUser.id}"/>
+									<br>
+									<br>
+									<button class="btn btn-info btn-md" name="Submit" value="SendMessage" type="Submit" >Send Message</button>
+								</form>
+							</div>
+							
+					   </div>
+				    </div>
+				 </div>
+				    <div class="col-sm-5">
+				    	
+						<div class="col-sm-12">
+						
+						    <div th:if="${lastTenMoods.size()!=0}" class="panel panel-info" >
+								<div class="panel-heading">
+									
+									<span>Last ten moods submitted</span>
+								</div>
+								<div class="panel-body" style="padding-left:50px; max-height:500px;" >
+									<table  class="table">
+										<tr>
+											<th>Mood</th>
+											<th>Rating</th>
+											<th>Date</th>
+										</tr>
+										<tr th:each="usermood,itr  : ${lastTenMoods}">
+											<td th:text="${usermood.moodTitle}"></td>
+											<td th:text="${usermood.rating}"></td>
+											<td th:text="${#dates.format(usermood.timestamp, 'HH:mm  dd-MMM-yyyy')}"></td>
+											
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>   
+				</div>
+				<div th:if="${viewname=='users'}">
+				
+					<div class="panel panel-info" >
+						<div class="panel-heading">
+							<span>Current User List</span>
+						</div>
+						<div class="panel-body"  >
+							<table class="col-md-10 table" >
+						      <tr>
+						      	<th scope="col">#</th>
+						        <th scope="col">Full Name</th>
+						        <th scope="col">Email</th>
+						        <th scope="col">Type</th>
+						        <th scope="col">Active</th>
+						      </tr>
+						      <tr th:each="user,itr  : ${users}">
+						      	<th scope="col" th:text="${itr.index+1}"></th>
+						        
+						        <td>
+						            <a th:href="@{/admin/getUser(userid=${user.id})}">
+						        	<span th:text="${user.name}"></span>
+						        	<span th:text="${user.lastName}"></span>
+						        	</a>
+						        </td>
+						        <td th:text="${user.email}"></td>
+						        <td th:text="${user.roles.get(0).role}"></td>
+						        <td th:text="${user.active}"></td>
+						      </tr>
+						    </table>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+
+
+</body>
+</html>

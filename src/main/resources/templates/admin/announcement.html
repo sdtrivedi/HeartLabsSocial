@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Admin Page</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	th:src="@{/js/jquery.min.js}"></script>
+<script	th:src="@{/js/bootstrap.min.js}"></script>
+
+<style>
+
+		.containe  {
+	    position: relative;
+	    width: 100%;
+	    max-width: 400px;
+	}
+	
+
+	
+</style>
+<script>
+			
+			
+</script>
+</head>
+
+<body>
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px">
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12 container">
+	
+		<div class="col-md-12" style="padding-top:20px;">
+			
+			
+				
+				
+		    <div class="col-sm-offset-1 col-sm-10">
+		    	<div class="col-sm-12 space">
+							<form th:action="@{/admin/sendMessage}" method="POST" class="form-signin">
+								<h3>Announcement</h3>
+								<textarea name="message" cols="80" rows="5"><p>Annoucement Content goes here...</p><a href="www.youtube.come">Link</a></textarea>
+								<input type="hidden" name="senderid"  th:value="${currentUser.id}"/>
+								<input type="hidden" name="receiverid" value="-1" />
+									
+								<br>
+								<br>
+								<button class="btn btn-primary btn-md" name="Submit" value="SendMessage" type="Submit" >Make Announcement</button>
+							</form>
+				</div>
+				<div class="col-sm-12">
+				
+					
+			      <div class="col-sm-12" th:each="announcement,itr  : ${previousAnnoucements}" style="border-bottom: 1px solid black">
+			      	
+			       <div class="space">
+			        	<h3>#<span  th:text="${itr.index+1}"></span>
+			        	<span>Posted date :</span> <span  th:text="${#dates.format(announcement.sentTimeStamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+			        	<b class="pull-right">Receivers :
+			        		<a href="" th:text="${announcement.receivers.size()}"></a>
+			        	</b>
+			        	</h3>
+			        	
+			        </div>
+			      
+			        <div class="space text-justify" >
+			        	<p th:utext="${announcement.messageContent}"></p>
+			        </div>
+			       
+			     
+
+			      </div>
+						  
+				</div>
+			</div>   
+			</div>
+			
+			
+		</div>
+
+	
+</div>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>
+		Heart Lab
+	</title>
+	<style>
+		p span 
+		{
+			display: block;
+		}
+		.title{
+			color:#c60d70;
+			font-weight: bold;
+			font-size:45px;
+		}
+		.sign-up-box{
+			border: 3px solid #c60d70;
+			border-radius:25px;
+			font-size:30px;
+			background-color:white;
+			padding:25px; 
+			text-align:center;
+			color: #c60d70;
+			font-weight:bold;
+		}
+		.bottom-box
+		{
+			border: 3px solid #6da5d6;
+			font-size:30px;
+			font-weight:bold;
+			height:150px;
+			padding:20px 10px;
+			text-align:center;
+			border-radius: 25px 25px 0px 0px;
+			color:white;
+			
+		}
+		.btn-circle.btn-lg {
+		  width: 130px;
+		  height: 130px;
+		  padding-top: 50px;
+		  font-size: 18px;
+		  line-height: 1.33;
+		  border-radius: 150px;
+		  margin:0px 25px;
+		  text-align: center
+		}
+	
+
+	</style>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	
+  	<script>
+		  	$( document ).ready(function() {
+		  		//var str = ${user};
+		  		var url = new URL(window.location.href);
+		        var page = url.searchParams.get("page");
+		  		if($('#page').val()== 'registration' || page == 'registration')
+		  	   		$('#registrationModal').modal('show'); 
+		  		if($('#page').val()== 'login' || page =='login')
+		  	   		$('#loginModal').modal('show'); 
+		  	});
+  	</script>
+</head>
+<body>
+
+	<div style="margin-top:25px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" class="container">
+		
+		<div lang="en" th:replace="header :: header"> </div>
+		<div lang="en" th:replace="header :: button-div"> </div>
+		<div class="col-md-12" style="margin-top:10px;">
+			<div class="col-md-12" style="border: 3px solid #c60d70;height:300px;border-radius: 50px;margin:15px 0px;background-color:lightblue;">
+				<div class="col-md-2">
+				
+					<img th:src="@{/images/logo.png}" alt="Paris" style="padding:25px;">
+				</div>
+				<div class="col-md-10 text-justify" style="padding:20px;">
+					<p>
+						<span style="font-size:20px;">
+							Welcome to the Healthy Experiences Across Relationships and Transitions lab (@HEART lab)! Research in the @HEART lab focuses on understanding the reciprocal processes that link romantic relationship experiences to emotional and behavioral adjustment. … …. 
+
+						</span>
+					</p>
+					
+					
+				</div>
+				
+				<div class="col-md-12" style=" text-align: center;">
+					<a href="/registration" style="text-decoration: none;" ><span class="sign-up-box">
+						<span >SIGN UP</span>
+					</span>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12" style="margin-top:10px;">
+			<div class="col-md-4 ">
+				<div class="bottom-box" style="background-color:#d6bc13">
+					WHAT WOULD YOU CHOOSE?
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="bottom-box" style="background-color:#65b213">
+					SCHOOL LIFE
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="bottom-box" style="background-color:#991e60">
+					ROMANTIC RELANTIONSHIPS
+				</div>
+			</div>
+		</div>
+		
+		 <div lang="en" th:include="header :: login-signup-modal"> </div>
+	</div>
+	
+</body>
+</html>

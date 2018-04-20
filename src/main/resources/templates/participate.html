@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>
+		Research
+	</title>
+	<style>
+		p span 
+		{
+			display: block;
+		}
+		.title{
+			color:#c60d70;
+			font-weight: bold;
+			font-size:45px;
+		}
+		
+		.btn-circle.btn-lg {
+		  width: 130px;
+		  height: 130px;
+		  padding-top: 50px;
+		  font-size: 18px;
+		  line-height: 1.33;
+		  border-radius: 150px;
+		  margin:0px 25px;
+		  text-align: center
+		}
+	
+
+	</style>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+	<link rel="stylesheet" th:href="@{/css/main.css}" type="text/css" />
+	<script type="text/javascript" th:src="@{/js/Winwheel.js}"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script>
+		  	$( document ).ready(function() {
+		  		//var str = ${user};
+		  		var url = new URL(window.location.href);
+		        var page = url.searchParams.get("page");
+		  		if($('#page').val()== 'registration' || page == 'registration')
+		  	   		$('#registrationModal').modal('show'); 
+		  		if($('#page').val()== 'login' || page =='login')
+		  	   		$('#loginModal').modal('show'); 
+		  	});
+  	</script>
+  	
+</head>
+<body>
+
+	<div style="margin-top:25px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" class="nav-container">
+		<div lang="en" th:replace="header :: header"> </div>
+		<div lang="en" th:replace="header :: button-div"> </div>
+		<div class="col-md-12" style="margin-top:10px;">
+			<h1>Participate</h1>
+			<div align="center">
+            <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td>
+                        <div class="power_controls">
+                            <br />
+                            <br />
+                            <img id="spin_button" th:src="@{/images/spin_off.png}" alt="Spin" onClick="startSpin();" />
+                            <br /><br />
+                            &nbsp;&nbsp;
+                    </td>
+                    <td width="438" height="582" class="the_wheel" align="center" valign="center">
+                        <canvas id="canvas" width="434" height="434">
+                            <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+                        </canvas>
+                    </td>
+                </tr>
+            </table>
+        	</div>
+        	<br/>
+        	<br/>
+        	<br/>
+		</div>
+		
+		<div class="modal" id="viewDataModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 style="color:#FF2F92; text-align:center;" id="titleOfModal" class="modal-title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><b>STEP 1:</b> Close your eyes<br/><br/>
+                        <b>STEP 2:</b> Inhale slowly and deeply with your mouth open for a total of 5 times.<br/><br/>
+                        <b>STEP 3:</b> Continue breathing as normal with your eyes closed for 30 seconds.<br/><br/>
+                        <b>STEP 4:</b> Open your eyes.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a th:href="@{/getUserMood}" type="button" class="btn btn-primary">Click Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+	
+		
+		
+		
+		
+		<div lang="en" th:include="header :: login-signup-modal"> </div>
+		
+		
+	
+	</div>
+	
+	<script>
+	var theWheel = new Winwheel({
+        'numSegments'  : 12,     // Specify number of segments.
+        'outerRadius'  : 212,   // Set outer radius so wheel fits inside the background.
+        'textFontSize' : 10,    // Set font size as desired.
+        'segments'     :        // Define segments including colour and text.
+        [
+           {'fillStyle' : '#FF2F92', 'text' : 'Hiking'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Sunset Walk'},
+           {'fillStyle' : '#FF2F92', 'text' : 'New Restaurant'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Cook a Homemade Meal'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Go Mini-Golfing'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Board Game Night'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Win the Most tickets at an Arcade'},
+           {'fillStyle' : '#FF2F92', 'text' : 'Visit a Museum'},
+            {'fillStyle' : '#FF2F92', 'text' : 'Ice Skating'},
+            {'fillStyle' : '#FF2F92', 'text' : 'Rock Climbing'},
+            {'fillStyle' : '#FF2F92', 'text' : 'Have a Picnic'},
+            {'fillStyle' : '#FF2F92', 'text' : 'Visit Planetarium'}
+        ],
+        'animation' :           // Specify the animation to use.
+        {
+            'type'     : 'spinToStop',
+            'duration' : 10,     // Duration in seconds.
+            'spins'    : 6,     // Number of complete spins.
+            'callbackFinished' : alertPrize
+        }
+    });
+
+    // Vars used by the code in this page to do power controls.
+    var wheelPower    = 0;
+    var wheelSpinning = false;
+
+
+
+    // -------------------------------------------------------
+    // Click handler for spin button.
+    // -------------------------------------------------------
+    function startSpin()
+    {
+        resetWheel();
+        // Ensure that spinning can't be clicked again while already running.
+        if (wheelSpinning == false)
+        {
+            // Based on the power level selected adjust the number of spins for the wheel, the more times is has
+            // to rotate with the duration of the animation the quicker the wheel spins.
+            if (wheelPower == 1)
+            {
+                theWheel.animation.spins = 6;
+            }
+
+            // Disable the spin button so can't click again while wheel is spinning.
+            document.getElementById('spin_button').src       = "/images/spin_off.png";
+            document.getElementById('spin_button').className = "";
+
+            // Begin the spin animation by calling startAnimation on the wheel object.
+            theWheel.startAnimation();
+
+            // Set to true so that power can't be changed and spin button re-enabled during
+            // the current animation. The user will have to reset before spinning again.
+            wheelSpinning = true;
+        }
+
+
+    }
+
+    // -------------------------------------------------------
+    // Function for reset button.
+    // -------------------------------------------------------
+    function resetWheel()
+    {
+        theWheel.stopAnimation(false);  // Stop the animation, false as param so does not call callback function.
+        theWheel.rotationAngle = 0;     // Re-set the wheel angle to 0 degrees
+
+        for(var i = 1; i<theWheel.segments.length;i++){
+           theWheel.segments[i].fillStyle = '#FF2F92';
+        }
+        theWheel.draw();                // Call draw to render changes to the wheel.
+
+//        document.getElementById('pw1').className = "";  // Remove all colours from the power level indicators.
+//        document.getElementById('pw2').className = "";
+//        document.getElementById('pw3').className = "";
+
+
+
+        wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
+    }
+
+    // -------------------------------------------------------
+    // Called when the spin animation has finished by the callback feature of the wheel because I specified callback in the parameters
+    // note the indicated segment is passed in as a parmeter as 99% of the time you will want to know this to inform the user of their prize.
+    // -------------------------------------------------------
+    function alertPrize(indicatedSegment)
+    {
+        // Do basic alert of the segment text. You would probably want to do something more interesting with this information.
+        //alert("You have won " + indicatedSegment.fillStyle);
+        //alert(document.getElementById('indicatedSegment'));
+        indicatedSegment.fillStyle = '#FF79B4';
+        theWheel.draw();
+        $('#viewDataModal').modal('show');
+        $("#titleOfModal").text(indicatedSegment.text);
+    }
+    
+	</script>
+	
+</body>
+</html>

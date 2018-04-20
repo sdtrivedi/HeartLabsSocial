@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Heart Lab</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	th:src="@{/js/jquery.min.js}"></script>
+<script	th:src="@{/js/bootstrap.min.js}"></script>
+
+<style>
+
+	
+</style>
+<script>
+			
+			$(document).ready(function() {
+				  $('.edit').on('click', function(ev) {
+					  var spanId = $(this).parent().siblings()[1];
+					  var inputTextId = $(this).parent().siblings()[2];
+					  var iconId = $(this).parent().siblings()[3];
+					  $(inputTextId).toggle();
+					  $(spanId).toggle();
+					  $(iconId).toggle();
+					  $(this).parent().toggle();
+					  
+					 
+				  });
+				  $('.save').on('click', function(ev) {
+					
+					  var spanId = $(this).parent().siblings()[1];
+					  var inputTextId = $(this).parent().siblings()[3];
+					  var iconId = $(this).parent().siblings()[2];
+					
+					  $(inputTextId).toggle();
+					  $(spanId).toggle();
+					  $(iconId).toggle();
+					  $(this).parent().toggle();
+					  
+			/* 
+					  var fieldName = $(inputTextId).attr('name');
+					  var value =  $(inputTextId).val();
+					  $.post("/admin/updateUserProfile",
+					            {
+						 		 fieldName : value
+					          
+					            }); */
+					            
+					   $('#submit-form').click();
+					 
+				  });
+			});
+</script>
+</head>
+
+<body>
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" >
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12">
+	
+		<div class="col-md-offset-3 col-md-6" style="padding-top:20px;">
+			
+				 <div class="panel panel-info" >
+					<div class="panel-heading">
+							<h3>User Profile</h3>
+					</div>
+					<div class="panel-body">
+							 <div class="col-sm-12" style="font-size: 18px;">
+								 <form autocomplete="off" action="#" th:action="@{/user/profile}"
+									th:object="${currentUser}" method="post" class="form-horizontal"
+									role="form">
+									<div class="col-sm-offset-2 col-sm-8 space">
+										<span>First Name :&nbsp</span>
+										
+										<span th:text=" ${currentUser.name}">
+										</span>
+										<a>
+											<span class="glyphicon glyphicon-pencil edit"></span>
+										</a>
+										<input style="display: none"  th:field="*{name}" type="text" th:value="${currentUser.name}"  size="15">
+										<a  style="display: none"><span  class="glyphicon glyphicon-ok save"></span></a>
+									</div>
+									<button id="submit-form" type="submit" style="display:none"> </button>
+									<input type="hidden" th:field="*{id}" th:value="${currentUser.id}" />
+									<div class="col-sm-offset-2 col-sm-8 space">
+										<span>Last Name :&nbsp</span>
+										
+										<span th:text=" ${currentUser.lastName}">
+										</span>
+										<a>
+											<span class="glyphicon glyphicon-pencil edit"></span>
+										</a>
+										<input style="display: none"  th:field="*{lastName}"  type="text" th:value="${currentUser.lastName}" name="last-name" size="15">
+										<a style="display: none"><span  class="glyphicon glyphicon-ok save"></span></a>
+									</div>
+									<div class="col-sm-offset-2 col-sm-8 space">
+										
+										<span>Email :&nbsp</span>
+										
+										<span th:text=" ${currentUser.email}">
+										</span>
+										
+									</div>
+									<div class="col-sm-offset-2 col-sm-8 space">
+										
+										<span>Credits :&nbsp</span>
+										
+										<span th:text=" ${userCredit.credits}">
+										</span>
+										
+									</div>
+									<div class="col-sm-offset-2 col-sm-8 space">
+										<span>Type :</span>&nbsp<span th:text="${currentUser.roles.get(0).role}"></span>
+									</div>
+									<div class="col-sm-offset-3 col-sm-6 space">
+										 
+										 <button class="btn btn-primary">Update Password</button>
+										
+									</div>
+								</form>
+							</div>
+						
+					   </div>
+				    </div>
+		</div>
+	</div>
+
+	
+</div>
+
+</body>
+</html>

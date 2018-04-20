@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>
+		Heart Lab
+	</title>
+	<style>
+		p span 
+		{
+			display: block;
+		}
+		.title{
+			color:#c60d70;
+			font-weight: bold;
+			font-size:45px;
+		}
+		
+		.btn-circle.btn-lg {
+		  width: 130px;
+		  height: 130px;
+		  padding-top: 50px;
+		  font-size: 18px;
+		  line-height: 1.33;
+		  border-radius: 150px;
+		  margin:0px 25px;
+		  text-align: center
+		}
+	
+
+	</style>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script>
+		  	$( document ).ready(function() {
+		  		//var str = ${user};
+		  		var url = new URL(window.location.href);
+		        var page = url.searchParams.get("page");
+		  		if($('#page').val()== 'registration' || page == 'registration')
+		  	   		$('#registrationModal').modal('show'); 
+		  		if($('#page').val()== 'login' || page =='login')
+		  	   		$('#loginModal').modal('show'); 
+		  	});
+  	</script>
+  	
+</head>
+<body>
+
+	<div style="margin-top:25px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" class="nav-container">
+		<div lang="en" th:replace="header :: header"> </div>
+		<div lang="en" th:replace="header :: button-div"> </div>
+		<div class="col-md-12" style="margin-top:10px;">
+			<div class="col-md-12">
+				<h1 style="text-decoration:underline; padding-left:30px; color:#C60D70">OUR MISSION</h1>
+				<div class="col-md-12 text-justify" style="border: 5px solid #c60d70; color:#c60d70; font-family:'Trebuchet MS', Helvetica, sans-serif; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+					<p>
+						<span style="font-size:20px;">
+							The @HEART LAB focuses on understanding the relationships that are formed during adolescence and early adulthood. These early relationships can be one of the most rewarding experiences and offer opportunities to learn what relationships are all about. Negative relationship experiences can contribute to feelings of depression and anxiety, as well as problem behaviors such as substance use and conduct behavior in school. Our mission is to develop a firm understanding of the dynamics of relationships and how culture, ethnicity, and school connectedness can impact the development of healthy relationships. Understanding the risk and resilience among youth within their family and peer relationships will help inform prevention and intervention strategies that will help promote healthy romantic relationships and future parenting strategies.
+						</span>
+					</p>
+					
+					
+				</div>
+				<div class="col-md-12">
+					<div class="col-md-3">
+						<img th:src="@{/images/family.png}" alt="Paris" style="padding:25px;">
+					</div>
+					<div class="col-md-9 text-justify" style=" border: 3px solid #EA8738; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#219AA4; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+						<h3 style="text-decoration:underline;">FAMILY</h3>
+						<span>Parenting strategies and family dynamics directly contribute to the development of youth. By promoting evidence-based intervention, researchers can implement these healthy parenting strategies into the community by implementing coaching programs that work with parents to engage in healthy communication with their children.
+						</span>	
+					</div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="col-md-9 text-justify" style=" border: 3px solid #EA8738; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#c60d70; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+						<h3 style="text-decoration:underline;">ROMANTIC RELATIONSHIPS</h3>
+						<span>We investigate all phases of adolescent and early adulthood romantic relationships, including partner selection, dating, and break up. Furthermore, we investigate these early relationships in the context of other relationships with family and friends. The goal of this research to better understand why some adolescents are highly vulnerable to their relationship experiences.  
+						</span>	
+					</div>
+					<div class="col-md-3">
+						<img th:src="@{/images/relationship.png}" alt="Paris" style="padding:25px;">
+					</div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="col-md-3">
+						<img th:src="@{/images/connectedness.png}" alt="Paris" style="padding:20px;">
+					</div>
+					<div class="col-md-9 text-justify" style=" border: 3px solid #EA8738; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#219AA4; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+						<h3 style="text-decoration:underline;">SOCIAL CONNECTEDNESS</h3>
+						<span>School connectedness is an important feature of healthy relationships. By equipping youth with teacher and social support, combined with school cultural empathy and inclusion, students are more likely to achieve improved academic outcomes. Building healthy relationships in school will directly translate to healthy navigation of other relationships, including peer and romantic relationships.
+						</span>	
+					</div>
+				</div>
+				
+			
+			</div>
+		</div>
+	
+		
+		<div lang="en" th:include="header :: login-signup-modal"> </div>
+	
+	</div>
+	
+</body>
+</html>

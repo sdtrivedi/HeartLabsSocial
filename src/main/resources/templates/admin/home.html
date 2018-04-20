@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Heart Lab</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<style>
+
+		
+	ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #111111;
+}
+	
+</style>
+
+
+
+
+</head>
+
+<body>
+	
+	
+	
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" >
+	<div lang="en" th:replace="header :: header"> </div>
+	<div>
+		
+	</div>
+	<div class="col-md-12">
+	
+		<div class="col-md-3"  style="padding-top:20px;border-right: 3px solid lightblue;min-height: 600px">
+					
+			<div class="mood-box" >
+						<div class="admin-message-text" style="font-weight: bold">
+							<span>Welcome :</span>
+							<span  th:utext="${currentUser.name}"></span>
+						</div>
+						<div>
+					    	<span> Current Mood: </span><span  th:utext="${lastUserMood.moodTitle}"></span>
+					    </div>
+					    <div>
+							<span> Rating: </span><span th:utext="${lastUserMood.rating}"></span><span>/10</span>
+						</div>
+						<div>
+							<span> Credits: </span><span th:utext="${userCredit.credits}"></span>
+						</div>
+			</div>
+			<div class="link">
+				<a th:href="@{/admin/profile}"> Update Profile</a>
+			</div>
+			<div class="link">
+				<a th:href="@{/admin/all_users}">
+				List All users</a>
+			</div>
+			<div class="link">
+				<a th:href="@{/admin/announcement}">
+				Announcement</a>
+			</div>
+		</div>
+		<div class="col-md-9" style="padding-top:20px;">
+			
+			<div class="panel-group" >
+				<div id="newsfeed-div" th:if="${viewname=='newsfeed'}">
+					<div  class="col-sm-12 space">
+						<div class="col-sm-8" style="border:3px solid lightblue;border-radius: 15px;">
+							<form th:action="@{/admin/sumbitPost}" method="POST" class="form-signin">
+								<h3>Make Post</h3>
+								
+								<div class="col-sm-12 space">
+									<textarea name="message" cols="63" rows="3" placeholder="What's on your mind?"></textarea>
+								</div>
+								<div class="col-sm-12 space">
+									<input type="text" name="video_link" style="width: 100%;" placeholder="Post your video link here"/>
+								</div>
+								<input type="hidden" name="userid"  th:value="${currentUser.id}"/>
+								<div class="col-sm-12 space">
+									<button class="btn btn-info btn-md" name="Submit" value="submitPost" type="Submit" >Submit Post</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col-sm-10 space">
+						<div class="alert alert-info">
+							 <strong>Your Newsfeed</strong>
+						</div>
+						
+						
+						 <div class="well post-div" th:each="post,itr  : ${recentPosts}">
+						 	<div>
+						 		<a th:href="@{/admin/deletePost(postid=${post.postId})}" class="btn btn-info pull-right delete-post" th:if="${post.postedBy.id == currentUser.id}" type="button" >Delete</a>
+						 		<h3>
+						 			<span th:utext="${post.postedBy.name}"></span>
+						 			<span th:utext="${post.postedBy.lastName}"></span>
+						 		</h3>
+						 		
+						 	</div>
+						 	<div style="overflow-y:scroll;max-height:150px; ">
+						 		<p  th:utext="${post.postContent}"></p>
+						 		
+						 	</div>
+						 	<div >
+						  		<span  th:utext="${post.videoLink}"></span>
+						  		<div th:if="${post.link==2}">
+						  			
+						  			<input type="hidden" class="postid" name="postid"  th:value="${post.postId}"/>
+						  		</div>
+							 	<div >
+							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+							 		
+							 	</div>
+						 	
+						 	</div>
+						</div>
+					</div>
+				</div>
+				<div th:if="${viewname=='userprofile'}">
+					<div class="panel panel-info" >
+						<div class="panel-heading">
+							<span>User Profile</span>
+						</div>
+						<div class="panel-body">
+							 <div class="col-sm-6" style="font-size: 18px;">
+								<div class="col-sm-12 space">
+									<span>Name :</span>&nbsp<span th:text=" ${userObject.name}"></span>
+								</div>
+								<div class="col-sm-12 space">
+									<span>Email :</span>&nbsp<span th:text="${userObject.email}"></span>
+								</div>
+								<div class="col-sm-12 space">
+									<span>Type :</span>&nbsp<span th:text="${userObject.roles.get(0).role}"></span>
+								</div>
+								<div class="col-sm-12 space">
+									<span th:if="${userObject.active==1}">
+										<a class="btn btn-danger" th:href="@{/admin/activateUser(username=${userObject.email},active=2)}">
+										Deactivate
+										</a>
+									</span>
+									<span th:if="${userObject.active==2}">
+										<a class="btn btn-info" th:href="@{/admin/activateUser(username=${userObject.email},active=1)}">
+										Activate
+										</a>
+									</span>
+								</div>
+								<div class="col-sm-12 space">
+									<form th:action="@{/admin/sendMessage}" method="POST" class="form-signin">
+										<h3>Send Message to&nbsp<span style="font-weight: bold" th:text=" ${userObject.name}"></span></h3>
+										<textarea name="message" cols="30" rows="3"></textarea>
+										<input type="hidden" name="receiverid"  th:value="${userObject.id}"/>
+										<input type="hidden" name="senderid"  th:value="${currentUser.id}"/>
+										<button class="btn btn-info btn-md" name="Submit" value="SendMessage" type="Submit" >Send Message</button>
+									</form>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<h2>Last ten moods submitted</h2>
+								<table class="table">
+								<tr>
+									<th>Mood</th>
+									<th>Rating</th>
+									<th>Date</th>
+								</tr>
+								<tr th:each="usermood,itr  : ${lastTenMoods}">
+									<td th:text="${usermood.moodTitle}"></td>
+									<td th:text="${usermood.rating}"></td>
+									<td th:text="${#dates.format(usermood.timestamp, 'HH:mm  dd-MMM-yyyy')}"></td>
+									
+								</tr>
+								</table>
+							</div>
+					   </div>
+				    </div>   
+				</div>
+				<div th:if="${viewname=='users'}">
+					<div class="panel panel-info" >
+						<div class="panel-heading">
+							<span>Current User List</span>
+						</div>
+						<div class="panel-body"  >
+							<table class="col-md-10 table" >
+						      <tr>
+						      	<th scope="col">#</th>
+						        <th scope="col">Full Name</th>
+						        <th scope="col">Email</th>
+						        <th scope="col">Type</th>
+						        <th scope="col">Active</th>
+						      </tr>
+						      <tr th:each="user,itr  : ${users}">
+						      	<th scope="col" th:text="${itr.index+1}"></th>
+						        
+						        <td>
+						            <a th:href="@{/admin/getUser(userid=${user.id})}">
+						        	<span th:text="${user.name}"></span>
+						        	<span th:text="${user.lastName}"></span>
+						        	</a>
+						        </td>
+						        <td th:text="${user.email}"></td>
+						        <td th:text="${user.roles.get(0).role}"></td>
+						        <td th:text="${user.active}"></td>
+						      </tr>
+						    </table>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+</body>
+</html>

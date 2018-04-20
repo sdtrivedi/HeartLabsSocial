@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>
+		Research
+	</title>
+	<style>
+		p span 
+		{
+			display: block;
+		}
+		.title{
+			color:#c60d70;
+			font-weight: bold;
+			font-size:45px;
+		}
+		
+		.btn-circle.btn-lg {
+		  width: 130px;
+		  height: 130px;
+		  padding-top: 50px;
+		  font-size: 18px;
+		  line-height: 1.33;
+		  border-radius: 150px;
+		  margin:0px 25px;
+		  text-align: center
+		}
+	
+
+	</style>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script>
+		  	$( document ).ready(function() {
+		  		//var str = ${user};
+		  		var url = new URL(window.location.href);
+		        var page = url.searchParams.get("page");
+		  		if($('#page').val()== 'registration' || page == 'registration')
+		  	   		$('#registrationModal').modal('show'); 
+		  		if($('#page').val()== 'login' || page =='login')
+		  	   		$('#loginModal').modal('show'); 
+		  	});
+  	</script>
+  	
+</head>
+<body>
+
+	<div style="margin-top:25px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" class="nav-container">
+		<div lang="en" th:replace="header :: header"> </div>
+		<div lang="en" th:replace="header :: button-div"> </div>
+		
+		<div class="col-md-12" style="margin-top:10px;">
+			<div class="col-md-12">
+				<h2 style="padding-left:30px; color:#416EBE">RESEARCHERS</h2>
+				<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #416EBE; margin: 1em 0;"/>
+				
+				<div class="col-md-12">
+					<div class="col-md-3">
+						<img th:src="@{/images/research.png}" alt="Paris" style="padding:25px;">
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-8 text-justify" style=" border: 4px solid #416EBE; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#249590; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+						<h3>Electroencephalogram (EEG)</h3>
+						<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #F8DBC3; margin: 1em 0;"/>
+						<span style="font-weight:bolder;">Electroencephalogram (EEG) is one method of collecting a measure brain activity. By placing the Electrical Geodesics Inc. 128-channel sensor nets over the head, we can passively record and identify activity in multiple locations of the brain. For our EEG research, participants have a sensor net placed on their head and are asked to play a variety of games on a computer screen. And don’t worry – nothing hurts! Our EGI sensor nets are pain-free!
+						</span>	
+					</div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="col-md-8 text-justify" style=" border: 4px solid #416EBE; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#249590; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+						<h3>Video Interactions</h3>
+						<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #F8DBC3; margin: 1em 0;"/>
+						<span style="font-weight:bolder;">To get a better sense of the underpinnings of social interactions, our lab can record videotaped interactions of romantic couples, families, or friends. Participating groups are prompted to have a private, casual conversation with each other while the camera is rolling.
+						</span>	
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-3">
+						<img th:src="@{/images/interaction.png}" alt="Paris" style="padding:25px;">
+					</div>
+				</div>
+				
+				<div class="col-md-12 text-justify" style=" border: 4px solid #416EBE; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#249590; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+					<h3>Hormonal Assessments</h3>
+					<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #F8DBC3; margin: 1em 0;"/>
+					<span style="font-weight:bolder;">Saliva samples can relay a variety of information about active hormones in the body during the course of different tasks. Our lab takes periodic assessments of saliva to track any changes in hormone levels and identify physical symptoms of stress and other components.
+				
+					</span>	
+				</div>
+				
+				<div class="col-md-12 text-justify" style=" border: 4px solid #416EBE; font-family:'Trebuchet MS', Helvetica, sans-serif; color:#249590; border-radius: 50px;margin:15px 0px;background-color:white; padding:20px">
+					<h3>Daily Assessments</h3>
+					<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #F8DBC3; margin: 1em 0;"/>
+					<span style="font-weight:bolder;">We don’t let the moments pass us by! We send out daily reminders prompting participants to complete a 5-minute survey that helps us identify the changes over the development of youth and early adults. Everyday counts because every daily assessment can earn you points that are redeemable for cash!
+					
+				
+					</span>	
+				</div>
+			
+			</div>
+		</div>
+	
+		
+		<div lang="en" th:include="header :: login-signup-modal"> </div>
+	
+	</div>
+	
+</body>
+</html>

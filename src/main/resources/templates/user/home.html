@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Heart Lab</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+		
+
+		.containe  {
+	    position: relative;
+	    width: 100%;
+	    max-width: 400px;
+	}
+	
+	.containe .btn {
+	    position: absolute;
+	    top: 45%;
+	    left: 55%;
+	    transform: translate(-50%, -50%);
+	    -ms-transform: translate(-50%, -50%);
+	 
+	    font-size: 18px;
+	    padding: 12px 24px;
+	    border: none;
+	    cursor: pointer;
+	    border-radius: 5px;
+	    text-align: center;
+	}
+	
+</style>
+<script>
+			
+		$(document).ready(function() {
+			
+			  
+			  
+			  $('.play-video').on('click', function(ev) {
+			 
+			    $(this).hide();
+			    var postIdInput = $(this).siblings()[0];
+			    var postId = $(postIdInput).val(); 
+			  
+			    $.post("/user/submitWatchedCount",
+			            {
+			              id : postId
+			          
+			            }); 
+			 
+			  });
+			  $('.delete-post').on('click', function(ev) {
+					 
+					
+				    var postIdInput = $(this).siblings()[0];
+				    var postId = $(postIdInput).val(); 
+				    console.log(postId);
+				  
+			});
+			$('.message-header').on('click', function(ev) {
+					 
+				  var messageContent = $(this).siblings()[0];
+				  var messageInput= $(this).children()[1];
+				  $(messageContent).toggle();
+				  var messageId = $(messageInput).val();
+				  console.log(messageId)
+				  
+				  $.post("/user/readnotification",
+				            {
+				              id : messageId
+				          
+				            });
+				
+				  
+			});
+			$('#notications').on('click', function() {
+				  
+				  $('#notification-div').toggle();
+				   
+				  
+			});
+		});
+</script>
+</head>
+
+<body>
+		
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px" class="nav-container">
+		<div lang="en" th:replace="header :: header"> </div>
+		<div class="col-md-12" >
+	
+			<div class="col-md-3"  style="padding-top:20px;border-right: 1px solid lightblue;min-height: 500px">
+							
+				
+				<div class="mood-box" >
+						<div class="admin-message-text" style="font-weight: bold">
+							<span>Welcome :</span>
+							<span  th:utext="${currentUser.name}"></span>
+						</div>
+						<div>
+					    	<span> Current Mood: </span><span  th:utext="${lastUserMood.moodTitle}"></span>
+					    </div>
+					    <div>
+							<span> Rating: </span><span th:utext="${lastUserMood.rating}"></span><span>/10</span>
+						</div>
+						<div>
+							<span> Credits: </span><span th:utext="${userCredit.credits}"></span>
+						</div>
+				</div>
+				<div class="link">
+					<a th:href="@{/user/profile}"> Update Profile</a>
+				</div>
+				<div>
+					
+					<div> 
+						<button id="notications" class="btn btn-lg btn-danger" >Notifications
+							<span class="glyphicon glyphicon-envelope"></span>
+							<span style="margin-top:-20px" class="badge" th:utext="${unreadMessages}"></span>
+						</button>
+						
+					</div>
+					<div id="notification-div" style="display:none;">
+						<div class="well" th:each="message,itr  : ${messages}">
+							<div class="message-header" >
+								<button class="btn btn-md btn-default">
+									<span th:utext="${message.sender.name}"></span>
+									<span th:utext="${message.sender.lastName}"></span>
+								</button>
+								<input type="hidden" name="messageid"  th:value="${message.messageId}"/>
+							</div>
+							<div class="message-body" style="display:none">
+								<div>
+									<span th:utext="${message.messageContent}"></span>
+								</div>
+								<div >
+									 <span>Sent date :</span> <span  th:text="${#dates.format(message.sentTimeStamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9" style="padding-top:20px;">
+			
+				<div id="newsfeed-div" th:if="${viewname=='newsfeed'}">
+					<div  class="col-sm-12 space">
+						<div class="col-sm-8" style="border:3px solid lightblue;border-radius: 15px;">
+							<form th:action="@{/user/sumbitPost}" method="POST" class="form-signin">
+								<h3>Make Post</h3>
+								
+								<div class="col-sm-12 space">
+									<textarea name="message" cols="63" rows="3" placeholder="What's on your mind?"></textarea>
+								</div>
+								<div class="col-sm-12 space">
+									<input type="text" name="video_link" style="width: 100%;" placeholder="Post your video link here"/>
+								</div>
+								<input type="hidden" name="userid"  th:value="${currentUser.id}"/>
+								<div class="col-sm-12 space">
+									<button class="btn btn-primary btn-md" name="Submit" value="submitPost" type="Submit" >Submit Post</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col-sm-10 space">
+						<div class="alert alert-info">
+							 <strong>Your Newsfeed</strong>
+						</div>
+						
+						
+						 <div class="well post-div" th:each="post,itr  : ${recentPosts}">
+						 	<div>
+						 		<a th:href="@{/admin/deletePost(postid=${post.postId})}" class="btn btn-info pull-right delete-post" th:if="${post.postedBy.id == currentUser.id}" type="button" >Delete</a>
+						 		<h3>
+						 			<span th:utext="${post.postedBy.name}"></span>
+						 			<span th:utext="${post.postedBy.lastName}"></span>
+						 		</h3>
+						 		
+						 	</div>
+						 	<div class="text-justify" style="overflow-y:scroll;max-height:150px; ">
+						 		<p  th:utext="${post.postContent}"></p>
+						 		
+						 	</div>
+						 	<div class="containe">
+						  		<span  th:utext="${post.videoLink}"></span>
+						  		<div th:if="${post.link==2}">
+						  			<button class="btn btn-danger play-video" >Play</button>
+						  			<input type="hidden" class="postid" name="postid"  th:value="${post.postId}"/>
+						  		</div>
+							 	<div >
+							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+							 	</div>
+						 	
+						 	</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</body>
+</html>
