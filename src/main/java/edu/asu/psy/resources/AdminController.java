@@ -1,6 +1,7 @@
 package edu.asu.psy.resources;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,10 +23,12 @@ import com.google.gson.Gson;
 
 import edu.asu.psy.models.Role;
 import edu.asu.psy.models.User;
+import edu.asu.psy.models.Survey;
 import edu.asu.psy.models.UserCredit;
 import edu.asu.psy.models.UserMood;
 import edu.asu.psy.models.Message;
 import edu.asu.psy.models.Post;
+import edu.asu.psy.service.SurveyService;
 import edu.asu.psy.service.UserService;
 
 @SpringBootApplication
@@ -34,7 +37,8 @@ import edu.asu.psy.service.UserService;
 public class AdminController {
 	@Autowired
 	private UserService userService;
-	
+	@Autowired
+	private SurveyService surveyService;
 
 	@GetMapping("/home")
 	public ModelAndView adminHomePage()
@@ -97,6 +101,46 @@ public class AdminController {
 		userService.saveUser(user);
 		
 		return profilePage();
+	}
+	
+	@GetMapping("/surveys")
+	public ModelAndView surveyPage()
+	{
+		ModelAndView modelAndView = new ModelAndView();
+		User user = getCurrentUser();
+	
+		List<Survey> surveys = surveyService.findAllSurveys();
+		Collections.reverse(surveys);
+		modelAndView.addObject("surveys", surveys);
+		modelAndView.addObject("currentUser", user);
+		modelAndView.addObject("userCredit",  userService.findUserCreditByUserId(user.getId()));
+		modelAndView.setViewName("admin/surveys");
+		return modelAndView;
+	}
+	@PostMapping("/savesurvey")
+	public ModelAndView saveSurvey(@RequestParam("survey") String surveyString)
+	{
+		try {
+		System.out.println("...."+surveyString);
+		Gson g = new Gson();
+		Survey s = g.fromJson(surveyString, Survey.class);
+
+		System.out.println("...."+g.toJson(s));	
+		
+		surveyService.saveSurvey(s);
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return surveyPage();
+	}
+	@GetMapping("/fetchsurvey")
+	public String fetchSurvey(@RequestParam("id") int id)
+	{
+		
+		Gson g = new Gson();
+		System.out.println(g.toJson(surveyService.findSurvey(id)));
+		return g.toJson(surveyService.findSurvey(id));
 	}
 	@GetMapping("/getmood")
 	public List<UserMood> getMood()

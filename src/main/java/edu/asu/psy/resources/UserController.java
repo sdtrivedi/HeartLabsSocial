@@ -1,5 +1,6 @@
 package edu.asu.psy.resources;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+
 import edu.asu.psy.models.Message;
 import edu.asu.psy.models.Post;
 import edu.asu.psy.models.Role;
+import edu.asu.psy.models.Survey;
 import edu.asu.psy.models.User;
+import edu.asu.psy.service.SurveyService;
 import edu.asu.psy.service.UserService;
 @SpringBootApplication
 @RestController
@@ -26,7 +31,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+	@Autowired
+	private SurveyService surveyService;
 	@GetMapping("/current_user")
 	public User getCurrentUser()
 	{
@@ -95,6 +101,23 @@ public class UserController {
 		modelAndView.setViewName("user/announcement");
 		return modelAndView;
 	}
+	
+	@GetMapping("/surveys")
+	public ModelAndView surveyPage()
+	{
+		ModelAndView modelAndView = new ModelAndView();
+		User user = getCurrentUser();
+	
+		Gson g = new Gson();
+	
+		String survey = g.toJson(surveyService.findSurvey(4)); 
+		modelAndView.addObject("survey", survey);
+		modelAndView.addObject("currentUser", user);
+		
+		modelAndView.setViewName("user/surveys");
+		return modelAndView;
+	}
+	
 	@PostMapping("/submitmood")
 	public User submitCurrentMood()
 	{

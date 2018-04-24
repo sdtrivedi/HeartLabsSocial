@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Survey Page</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style>
+
+		.containe  {
+	    position: relative;
+	    width: 100%;
+	    max-width: 400px;
+	}
+	
+
+	
+</style>	  
+		  
+
+<script th:inline="javascript">
+	
+	$(document).ready(function(){
+	/*<![CDATA[*/
+	
+		    var survey = [[${survey}]];
+		    var surveyObj = JSON.parse(survey);	    
+	/*]]>*/    
+	        console.log(surveyObj);
+	
+			$('#survey-title').text(surveyObj.title);
+		    previewSurvey(surveyObj.questions);
+		    
+		    function previewSurvey(qst)
+ 			{
+ 				var questions = qst;
+ 				var surveyContent = '<input type="hidden" id="survey-id" value="'+qst.surveyId+'" >';
+		   		for(var i =0; i< questions.length; i++)
+		   			{
+		   				
+		   				var qst = '<div class="col-sm-12"><b>Q'+(i+1)+'. '+questions[i].question+'</b></div>';
+		   				
+		   				var type = questions[i].type;
+		   				var optn ='<div class="col-sm-12" style="padding-left:30px;">';
+		   				if(type==1)
+		   				{
+		   					for(var j =0; j<questions[i].options.length;j++)
+		   					{
+		   						optn+='<div><input class="qst'+questions[i].questionId+'" type="radio" value="'+questions[i].options[j].id+'" />'+questions[i].options[j].content+'</div>';
+		   					}
+		   				}
+		   				if(type==2)
+		   				{
+		   					for(var j =0; j<questions[i].options.length;j++)
+		   					{
+		   						optn+='<div><input class="qst'+questions[i].questionId+'" type="checkbox" value="'+questions[i].options[j].id+'"/>'+questions[i].options[j].content+'</div>';
+		   					}
+		   				}
+		   				if(type==3)
+		   				{
+		   					optn+='<div><span>Min Range : '+questions[i].options[0].content+'</span>'+
+		   					       '<span> Max Range : '+questions[i].options[1].content+'</span></div>';
+		   				}
+		   				if(type==4)
+		   				{
+		   					
+		   					optn+='<div><textarea class="qst'+questions[i].questionId+'" rows="3" cols="45" placeholder="'+questions[i].options[0].content+'"></textarea></div>';
+		   					
+		   				}
+		   				optn+='</div>';
+		   				surveyContent+='<div class="col-sm-12 well">'+qst+optn+'</div>';
+		   			}
+		   	
+		   		surveyContent+='<div id="submit-survey" class="col-sm-12"><button class="btn btn-md btn-primary">Submit Survey</button></div>'
+		   	 	$('#survey-questions').html(surveyContent);
+		 
+ 			}
+		    
+		    $('#submit-survey').click(function(){
+		    	var questions = surveyObj.questions;
+		    	for(var i =0; i< questions.length; i++)
+	   			{
+		    		if(questions[i].type==1)
+		    			{
+		    				console.log($('input[type=radio]:checked').val());
+		    			}
+		    		else if(questions[i].type==2)
+	    			{
+	    				console.log($('input[type=check]:checked').val());
+	    			}
+	   			}
+		    });
+	});
+</script>
+
+</head>
+
+<body>
+	<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px">
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12 container">
+	
+		<div class="col-md-12" style="padding-top:20px;">
+			
+			
+				
+				
+		    <div class="col-sm-offset-3 col-sm-6" >
+		    	<div class="col-sm-12">
+		    		<h2 id="survey-title">Survey 2</h2>
+		    	</div>
+		    	<div class="col-sm-12" id="survey-questions" style="font-size: 18px;">
+			    	
+				</div>   
+			</div>
+			
+			
+		</div>
+	</div>
+
+</div>
+
+</body>
+</html>

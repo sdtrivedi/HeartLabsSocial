@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.asu.psy.models.Message;
 import edu.asu.psy.models.Post;
+import edu.asu.psy.models.Question;
+import edu.asu.psy.models.Survey;
 import edu.asu.psy.models.User;
 import edu.asu.psy.models.UserCredit;
 import edu.asu.psy.models.UserMood;
@@ -39,4 +41,7 @@ public interface UserService {
 	public void saveUserCredit(UserCredit userCredit);
 	public void updateUserCredit(UserCredit userCredit);
 	public UserCredit findUserCreditByUserId(int id);
+	
+	
+	
 }
