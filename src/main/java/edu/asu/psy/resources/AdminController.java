@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,8 @@ public class AdminController {
 	private UserService userService;
 	@Autowired
 	private SurveyService surveyService;
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@GetMapping("/home")
 	public ModelAndView adminHomePage()
@@ -326,5 +329,33 @@ public class AdminController {
 		return adminHomePage();
 	}
 	
+	@RequestMapping(value="/updatePassword", method = RequestMethod.POST)
+	public String updatePassword(@RequestParam("currPass") String currPass, @RequestParam("newPass") String newPass)
+	{
+		
+		String response = "";
+		try {
+		User currentUser = getCurrentUser();
+		System.out.println(currPass+","+newPass);
+		System.out.println(currentUser.getPassword());
+		System.out.println(bCryptPasswordEncoder.encode(currPass.trim()));
+		System.out.println(bCryptPasswordEncoder.encode(currPass.trim()));
+		
+		if(bCryptPasswordEncoder.matches(currPass, currentUser.getPassword())) {
+			String encrpytNewPass = bCryptPasswordEncoder.encode(newPass);
+			currentUser.setPassword(encrpytNewPass);
+			userService.saveUser(currentUser);
+			response = "{\"status\":\"Update Success\"}";
+		}
+		else {
+			response = "{\"status\":\"Current password not correct\"}";
+		}
+		
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return response;
+	}
 
 }
