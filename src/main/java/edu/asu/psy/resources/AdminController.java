@@ -103,13 +103,18 @@ public class AdminController {
 		return profilePage();
 	}
 	
+	
 	@GetMapping("/surveys")
 	public ModelAndView surveyPage()
 	{
 		ModelAndView modelAndView = new ModelAndView();
 		User user = getCurrentUser();
 	
+		
 		List<Survey> surveys = surveyService.findAllSurveys();
+		
+		System.out.println(new Gson().toJson(surveyService.findSurveyResponse(5)));
+		
 		Collections.reverse(surveys);
 		modelAndView.addObject("surveys", surveys);
 		modelAndView.addObject("currentUser", user);

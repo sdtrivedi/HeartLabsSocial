@@ -21,6 +21,7 @@ import edu.asu.psy.models.Message;
 import edu.asu.psy.models.Post;
 import edu.asu.psy.models.Role;
 import edu.asu.psy.models.Survey;
+import edu.asu.psy.models.SurveyResponse;
 import edu.asu.psy.models.User;
 import edu.asu.psy.service.SurveyService;
 import edu.asu.psy.service.UserService;
@@ -110,7 +111,7 @@ public class UserController {
 	
 		Gson g = new Gson();
 	
-		String survey = g.toJson(surveyService.findSurvey(4)); 
+		String survey = g.toJson(surveyService.findSurvey(5)); 
 		modelAndView.addObject("survey", survey);
 		modelAndView.addObject("currentUser", user);
 		
@@ -166,6 +167,17 @@ public class UserController {
 			}
 		
 		return userHomePage();
+	}
+	
+	@RequestMapping(value="/savesurveyresponse", method = RequestMethod.POST)
+	public void saveSurveyResponse(@RequestParam("response") String response)
+	{
+		System.out.println("......."+response);
+		Gson g = new Gson();
+		SurveyResponse s = g.fromJson(response, SurveyResponse.class);
+		s.setUserId(getCurrentUser().getId());
+		surveyService.saveSurveyResponse(s);
+		System.out.println(g.toJson(s));
 	}
 	@RequestMapping(value="/submitWatchedCount", method = RequestMethod.POST)
 	public void submitWatchedCount(@RequestParam("id") int id)

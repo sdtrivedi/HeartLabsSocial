@@ -57,7 +57,7 @@
 				for(var i =0; i<radioOptionsArr.length; i++ )
 					{
 						content+='<div style="margin-bottom: 15px;">'+
-						'<input type="radio"/>&nbsp&nbsp<input class="radio-options" type="text" value="'+radioOptionsArr[i]+'"/>'+
+						'<input type="radio"/>&nbsp&nbsp<input class="radio-options" type="text" value="" placeholder="'+radioOptionsArr[i]+'"/>'+
 						'<a  id="radio-btn'+i+'" ><span class="glyphicon glyphicon-remove"></span></a></div>';
 					}
 				$('#single-choice-option-div').html(content);
@@ -301,8 +301,8 @@
 		    	renderRadioOptions();
 		    	$(".type-div").hide();
 		    	$(".question-type").prop("checked", false);
-		    	$('#question').val('Type question here...');
-		    	$('#short-answer').val('Short description');
+		    	$('#question').attr("placeholder", "Type question here...");
+		    	$('#short-answer').attr("placeholder", "Short description");
 		    	$('#question-num').text('Q'+(questionNumber+1));
 		    	updateButtons();
 		    }
