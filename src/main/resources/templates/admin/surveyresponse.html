@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Survey Page</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+
+<style>
+
+	
+</style>
+<script>
+</script>
+<body>
+
+<div style="margin-top:20px;border:1px solid #e0ffff; background-color:#e0ffff;padding:10px 0px">
+	<div lang="en" th:replace="header :: header"> </div>
+	<div class="col-md-12 container">
+	<div class="row">
+		<div class="col-sm-12 space">
+			<a  th:href="@{/admin/surveys}" class="btn btn-md btn-primary">
+				<span class="glyphicon glyphicon-chevron-left"></span> Surveys
+			</a>
+			<a  th:href="@{/admin/surveyresponsedetailscsv(publishId=${publishedSurveyId})}" class="btn btn-md btn-primary">Export CSV</a>
+		</div>
+		<div class="col-sm-offset-1 col-sm-10 ">
+			
+			<h3>Survey Response Details</h3>
+			<div th:if="${surveyResponses.size()==0}">
+				No Data
+			</div>
+			<div th:if="${surveyResponses.size()!=0}">
+			
+					<table class="table table-bordered space" style="width:100%">
+			  
+				 	 <tr>
+							<th><span>Full Name: </span></th>		
+							<td   th:each="answer  : ${surveyResponses.get('th').surveyAnswers}">
+								<b><span th:text="${answer.question.question}"></span></b>	
+							</td>
+							
+					 </tr> 
+					
+					<tr  th:each="name,itr  : ${surveyResponses.keySet()}">
+						
+						 <span th:if="${name!='th'}">
+						 
+						 	<td><span th:text="${name}"></span></td>
+							
+							
+							<td   th:each="answer  : ${surveyResponses.get(name).surveyAnswers}">	
+								
+								<span th:text="${answer.response}"></span>
+								
+							
+							</td>
+						</span>
+					</tr>
+							
+					
+					</table>
+			</div>
+		
+		</div>
+	</div>
+</div>
+</div>
+</body>
+
+</html>

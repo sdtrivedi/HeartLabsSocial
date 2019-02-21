@@ -136,7 +136,7 @@ li a:hover {
 						  			<input type="hidden" class="postid" name="postid"  th:value="${post.postId}"/>
 						  		</div>
 							 	<div >
-							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm a dd-MMM-yyyy')}"></span>
 							 		
 							 	</div>
 						 	

@@ -8,21 +8,16 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
-<style>
 
-		.containe  {
-	    position: relative;
-	    width: 100%;
-	    max-width: 400px;
-	}
-	
 
-	
-</style>
 <script>
 		$(document).ready(function(){
 			var questions= []
+			var surveyId =0;
+			var createdAt;
+			var updateFlag = false;
 			var radioOptionsArr = ['New Option'];
 			var checkBoxOptionsArr = ['New Option'];
 			var questionType=0;
@@ -51,13 +46,31 @@
 					checkBoxOptionsArr.splice(index, 1);
 					renderCheckBoxOptions();
 				};
+			var fn3 = function deleteQuestionInSurveyPreview(ev)
+				{
+					var index =parseInt(this.id.substring(18));
+					questions.splice(index,1);
+					previewSurvey(questions);
+					
+				};
+			var fn4 = function editQuestionInSurveyPreview(ev)
+				{
+					
+					var index =parseInt(this.id.substring(16));
+					var qst = questions[index];
+					questionNumber = index;
+					updateButtons();
+					$('#surveyModal').modal('hide');
+	    			displayQuestion(qst);
+	    			
+				};
 			function renderRadioOptions()
 			{
 				var content = '';
 				for(var i =0; i<radioOptionsArr.length; i++ )
 					{
 						content+='<div style="margin-bottom: 15px;">'+
-						'<input type="radio"/>&nbsp&nbsp<input class="radio-options" type="text" value="" placeholder="'+radioOptionsArr[i]+'"/>'+
+						'<input type="radio"/>&nbsp&nbsp<input class="radio-options" type="text" value="'+radioOptionsArr[i]+'"/>'+
 						'<a  id="radio-btn'+i+'" ><span class="glyphicon glyphicon-remove"></span></a></div>';
 					}
 				$('#single-choice-option-div').html(content);
@@ -117,7 +130,7 @@
 		        updateButtons();
 		    });
 		    $("#new-option").click(function(){
-		    	//console.log($("#single-choice-option-div input"));
+		    	
 		    	var i =0;
 		    	$("#single-choice-option-div input[type='text']").each(function(){
 		    		
@@ -158,19 +171,21 @@
 		    });
  			function previewSurveyFetchedFromServer(obj)
  			{
+ 				$('#new-survey-div').toggle();
+		    	$('#old-survey-div').toggle();
  				$('#survey-title').val(obj.title);
  				previewSurvey(obj.questions);
  			}
  			function previewSurvey(qst)
  			{
- 				var questions = qst;
+ 				questions = qst;
  				var surveyContent = '';
 		   		for(var i =0; i< questions.length; i++)
 		   			{
 		   				
 		   				var qst = '<b>Q'+(i+1)+'. '+questions[i].question+'</b>';
-		   				var deleteBtn = '<span class="pull-right"><button class="btn btn-sm- btn-info">Edit</button>'
-		   								+'&nbsp<button class="btn btn-sm- btn-danger">Delete</button></span>';
+		   				var deleteBtn = '<span class="pull-right"><button id="preview-qst-edit'+i+'" class="btn btn-sm- btn-info">Edit</button>'
+		   								+'&nbsp<button id="preview-qst-delete'+i+'" class="btn btn-sm- btn-danger">Delete</button></span>';
 		   				var type = questions[i].type;
 		   				var optn ='';
 		   				if(type==1)
@@ -202,10 +217,21 @@
 		   			}
 		   	 $('#modal-survey-title').text($('#survey-title').val());
 		   	 $('#survey').html(surveyContent);
+		 	for(var i =0; i<questions.length; i++ )
+			{
+				$('#preview-qst-delete'+i).click(fn3);
+				$('#preview-qst-edit'+i).click(fn4);
+			}
 		   	 $('#surveyModal').modal({backdrop: 'static', keyboard: false}) 
  			}
 		    function addQuestionContent(){
 		    	
+		    	var questionId =0;
+
+		   		if(updateFlag && questionNumber< questions.length)
+		   		{
+		   			questionId = questions[questionNumber].questionId;
+		   		}
 		    	var question= $('#question').val();
 		   		var obj;
 		   		if(questionType ==1)
@@ -215,16 +241,16 @@
 			    		
 			    		radioOptionsArr[i++] = $(this).val();
 				    });
-		   			obj = {"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(radioOptionsArr)};  			
+		   			obj = {"questionId":questionId,"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(radioOptionsArr)};  			
 	   			}
 		   		else if(questionType ==2)
 	   			{
 		   			var i =0;
-		   			$("#single-choice-option-div input[type='text']").each(function(){
+		   			$("#multiple-choice-option-div input[type='text']").each(function(){
 			    		
-			    		radioOptionsArr[i++] = $(this).val();
+		   				checkBoxOptionsArr[i++] = $(this).val();
 				    });
-		   			obj = {"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(checkBoxOptionsArr)};
+		   			obj = {"questionId":questionId,"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(checkBoxOptionsArr)};
 	   			}
 		   		else if(questionType ==3)
 	   			{
@@ -233,15 +259,16 @@
 		   			var arr =[];
 		   			arr.push(min);
 		   			arr.push(max);
-		   			obj = {"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(arr)};
+		   			obj = {"questionId":questionId,"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(arr)};
 	   			}
 		   		else if(questionType ==4)
 	   			{
 		   			var placeholder = $('#short-answer').val();
 		   			var arr =[];
 		   			arr.push(placeholder);
-		   			obj = {"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(arr)};
+		   			obj = {"questionId":questionId,"id":questionNumber,"question":question,"type":questionType,"options":convertOptions(arr)};
 	   			}
+		   		
 		   		
 		   		if(questionNumber<questions.length)
 	   			{
@@ -250,6 +277,7 @@
 		   		else{
 		   			questions.push(obj);
 		   		}
+		   		
 		    }
 		    function convertOptions(arr)
 		    {
@@ -264,7 +292,23 @@
 		    	return jsonArr;
 		    }
 		    $("#prev-question").click(function(){
+		    
+		    	if (questionNumber<=0)
+		    		return;
 				questionNumber -= 1;
+		    	
+		    	if(questionNumber>=0)
+		    		{
+		    			var qst = questions[questionNumber];
+		    			displayQuestion(qst);
+		    		}
+		    	
+		    	updateButtons();
+		    });
+		    $("#next-question").click(function(){
+		    	if (questionNumber>=questions.length)
+		    		return;
+				questionNumber += 1;
 		    	
 		    	if(questionNumber<questions.length)
 		    		{
@@ -274,6 +318,7 @@
 		    	else{
 		    		init();
 		    	}
+		    	updateButtons();
 		    });
 		    function nextQuestion()
 		    {
@@ -287,12 +332,14 @@
 					init();
 		    	}
 		    	updateButtons();
-		    	
+		    	$('#question').val('');
 		    }
 		  
 		    function init()
 		    {
 		    	$("#add-question").prop("disabled",true);
+		    	$("#prev-question").prop("disabled",true);
+		    	$("#next-question").prop("disabled",true);
 		    	radioOptionsArr = ['New Option'];
 	    		checkBoxOptionsArr = ['New Option'];
 				questionType=0;
@@ -309,9 +356,14 @@
 		    
 		    function displayQuestion(qst)
 		    {
+		    	console.log(qst);
+		    	
 		    	var type = qst.type;
+		    	
     			var questionContent = qst.question
+    			
     			questionType = type;
+    			
     			var options = convertOptionToArr(qst.options);
     			$(".type-div").hide();
     			if(type==1)
@@ -339,9 +391,12 @@
     			
     			renderCheckBoxOptions();
 		    	renderRadioOptions();
+		    	$('#question').val(questionContent);
 		    	$(".question-type").prop("checked", false);
 		    	$(".question-type")[type-1].checked = true
 		    	$('#question-num').text('Q'+(questionNumber+1));
+		  
+		    	
 		    	  	
 		    }
 		    function convertOptionToArr(options)
@@ -356,39 +411,122 @@
 		    }
 		    function updateButtons()
 		    {
-		    	//$("#add-question").prop("disabled",false);
-		    	if(questionNumber ==0)
+		    	
+		    	if(questionNumber <=0)
 		    	{
 		    	    $("#prev-question").prop("disabled",true);
 		    	}
 		    	else
 		    		$("#prev-question").prop("disabled",false);
+		    	
+		    	if(questionNumber >= questions.length)
+		    	{
+		    	    $("#next-question").prop("disabled",true);
+		    	}
+		    	else
+		    		$("#next-question").prop("disabled",false);
 		    }
+		    
+		    // AJAX CALLs
 		    $("#save-survey").click(function(){
 		    	
 		    	var title = $('#survey-title').val();
-		    	var payload = {"title":title, "questions":questions}
+		    	var payload ='';
+		    	if(updateFlag)
+		    		{
+		    			payload = {"surveyId":surveyId,"title":title, "questions":questions,"createdAt":createdAt};
+		    		}
+		    	else
+		    		{
+		    			payload = {"surveyId":surveyId,"title":title, "questions":questions};
+		    		}
+		    	
 		    	console.log(JSON.stringify(payload));
-		    	$.post("/admin/savesurvey",
+		       	$.post("/admin/savesurvey",
 				            {
 				              survey : JSON.stringify(payload)
 				          
 				            }).done(function() {
+				            	
 				            	location.reload(true);
-				            });
-		    });
+				            });  
+		    }); 
 		    $(".view-edit-survey").click(function(){
 		    	
-		    	var survey_id = $(this).siblings('input').val();
+		    	var survey_id = $(this).parent().siblings('input').val();
+		    	
+		    	
 		    	$.get("/admin/fetchsurvey",
 			            {
 			              id : survey_id
 			          
 			            }).done(function(res) {
+			            	console.log(res);
 			            	var obj = JSON.parse(res);
+			            	surveyId = obj.surveyId;
+			            	createdAt = obj.createdAt;
+			            	updateFlag = true;
 			            	previewSurveyFetchedFromServer(obj);
 			            }); 
 		    });
+ 			$(".delete-survey").click(function(){
+		    	
+		    	var survey_id = $(this).parent().siblings('input').val();
+		    	$.post("/admin/deletesurvey",
+			            {
+			              surveyId : survey_id
+			          
+			            }).done(function(res) {
+			            	location.reload(true);
+			            }); 
+		    });
+ 		
+			$(".post-survey").click(function(){
+				 				
+	 				var survey_id = $(this).siblings('input').val();
+	 				$.get("/admin/fetchsurvey",
+				            {
+				              id : survey_id
+				          
+				            }).done(function(res) {
+				            	var obj = JSON.parse(res);
+				            	console.log(obj);
+				            	var content = '<div><b>Title: </b>'+obj.title+'</div>';
+				 				content+='<input type="hidden" id="published-survey-id" value="'+obj.surveyId+'">'
+				            	content+='<div><b> Questions: </b>'+obj.questions.length+'<b></div>';
+				            	
+				 				$('#post-suvey-details').html(content);
+				 				var select = '<select id="rater-question">';
+				 				for(var i =0; i<obj.questions.length; i++)
+				 					{
+				 						if(obj.questions[i].type==3)
+				 							select+= '<option value="'+obj.questions[i].questionId+'">'+obj.questions[i].question+'</option>';
+				 					}
+				 				select+='</select>';
+				 				$('#game-question').html(select);
+				 				
+				            });   
+				 				
+				});
+			$("#publish-survey").click(function(){
+				var survey_Id= $('#published-survey-id').val();
+				var dateTime = ($('#datepicker').val());
+				
+				var gameQuestionId= $('#rater-question').val();
+				var questionVal = $('#rater-val').val();
+				
+				$.post("/admin/publishsurvey",
+			            {
+			              surveyId : survey_Id,
+			              endDate:  dateTime,
+			              questionId:gameQuestionId,
+			              questionVal:questionVal
+			          
+			            }).done(function(res) {
+			            	alert('Survey Published');
+			            	location.reload(true);
+			            });  
+			});
 		    
 		});
 </script>
@@ -403,8 +541,55 @@
 			
 			
 				
+			<div class="col-sm-4" style="max-height:600px;overflow-y:auto ; ">
+				<h3>Current Published Surveys</h3>
+				<div th:if="${currentPublishedSurveys.size()!=0}">
+					<div  class="col-sm-12 well" th:each="publishedSurvey,itr  : ${currentPublishedSurveys}">
+						<div class="co-sm-12">
+							<b>Survey Title: </b><span th:text="${publishedSurvey.surveyTitle}"></span>
+						</div>
+						<div class="co-sm-12">
+							<b>Survey Submissions: </b><span th:text="${publishedSurvey.submissionCount}"></span>
+						</div>
+						<div class="co-sm-12">
+							<b>Survey End Date: </b><span  th:text="${#dates.format(publishedSurvey.endsAt, 'HH:mm a dd-MMM-yyyy')}"></span>
+						</div>
+						<div class="co-sm-12">
+							<a class="btn btn-md btn-info " th:href="@{/admin/surveyresponsedetails(publishId=${publishedSurvey.id})}">Submission Data</a>
+						</div>
+					</div>
+				</div>
+				<div th:if="${currentPublishedSurveys.size()==0}">
+					<div  class="alert alert-success">
+						There is no current survey.
+					</div>
+				</div>
+				<h3>Old Published Surveys</h3>
+				<div th:if="${oldPublishedSurveys.size()!=0}">
+					<div  class="col-sm-12 well" th:each="publishedSurvey,itr  : ${oldPublishedSurveys}">
+						<div class="co-sm-12">
+							<b>Survey Title: </b><span th:text="${publishedSurvey.surveyTitle}"></span>
+						</div>
+						<div class="co-sm-12">
+							<b>Survey Submissions: </b><span th:text="${publishedSurvey.submissionCount}"></span>
+						</div>
+						<div class="co-sm-12">
+							<b>Survey End Date: </b><span  th:text="${#dates.format(publishedSurvey.endsAt, 'HH:mm a dd-MMM-yyyy')}"></span>
+						</div>
+						<div class="co-sm-12">
+							<a class="btn btn-md btn-info " th:href="@{/admin/surveyresponsedetails(publishId=${publishedSurvey.id})}">Submission Data</a>
+						</div>
+					</div>
+				</div>
+				<div th:if="${oldPublishedSurveys.size()==0}">
+					<div  class="alert alert-success">
+						There is no old survey.
+					</div>
+				</div>
 				
-		    <div class="col-sm-offset-3 col-sm-6" >
+			</div>
+		    <div class="col-sm-8" >
+		    	<h3>Survey Templates</h3>
 		    	<div class="col-sm-12 space">
 			    	<div class="col-sm-12 space">
 			    		<a id="create-survey" class="btn btn-md btn-danger">
@@ -423,7 +608,7 @@
 				    	</div>
 				    	<div class="col-sm-12 space">
 				    		<span><b id="question-num"> </b></span>
-				    		<span><input size="45" id="question" value=""/></span>
+				    		<span><input size="45" id="question" value="" required/></span>
 				    	</div>
 				    	<div class="col-sm-12">
 				    		<b>Please select type of question*</b>
@@ -465,13 +650,24 @@
 				    	<div class="type-div col-sm-12 space" id="short-answer-div" style="display:none">
 									
 							<b>Short Answer</b>
-							<input id="short-answer" name="short-answer" value="Short" size="45"/>
+							<input id="short-answer" name="short-answer" size="45"/>
 						</div>
 						<div class="col-sm-offset-2 col-sm-8 space" style="text-align: center">
-							
-							<button class="btn btn-primary btn-md" id="prev-question">Prev Question</button>
+							<button class="btn btn-primary btn-md" id="prev-question">
+						          Prev <span class="glyphicon glyphicon-backward"></span>
+						     </button>
+						     &nbsp
+						     &nbsp
+						     &nbsp
 							<button class="btn btn-primary btn-md" id="add-question">Add Question</button>
-							
+							 &nbsp
+						     &nbsp
+						     &nbsp
+							 <button class="btn btn-primary btn-md" id="next-question">
+						          Next <span class="glyphicon glyphicon-forward"></span>
+						     </button>
+						    
+						    
 						</div>
 					</div>
 				</div>
@@ -479,7 +675,10 @@
 					<div  class="col-sm-12 well" th:each="survey,itr  : ${surveys}">
 					 	<div class="col-sm-12">
 					 		<input type="hidden" th:value="${survey.surveyId}"/>
-					 		<button  class="btn btn-sm btn-danger pull-right view-edit-survey">Edit / View</button>
+					 		<span class="pull-right">
+					 			<button  class="btn btn-sm btn-info view-edit-survey">Edit / View</button>
+					 			<button  class="btn btn-sm btn-danger delete-survey">Delete</button>
+					 		</span>
 					 		<h3 th:text="${survey.title}"></h3>
 					 		
 					 	</div>
@@ -487,7 +686,11 @@
 					 		<big> Questions: </big>
 					 		<span th:text="${survey.questions.size()}"></span>
 					 		<span class="pull-right"> <b>Created At: &nbsp&nbsp</b> 
-					 		<b class="pull-right" th:text="${#dates.format(survey.createdAt, 'HH:mm  dd-MMM-yyyy')}"></b></span>
+					 		<b class="pull-right" th:text="${#dates.format(survey.createdAt, 'HH:mm a dd-MMM-yyyy')}"></b></span>
+					 	</div>
+					 	<div class="col-sm-12" style="text-align:center">
+					 		<input type="hidden" th:value="${survey.surveyId}"/>
+					 		<button class="btn btn-md btn-primary post-survey" data-toggle="modal" data-target="#postSurveyModal" >Post Survey</button>
 					 	</div>
 					</div>
 				</div>
@@ -514,6 +717,41 @@
 		        </div>
 		        <div class="modal-footer" style="text-align:center">
 		          <button type="button" id="save-survey" class="btn btn-danger">Save Survey</button>
+		        </div>
+		      </div>
+		      
+		    </div>
+		</div>
+		<div class="modal fade" id="postSurveyModal" role="dialog">
+		    <div class="modal-dialog">
+		    
+		      <!-- Modal content-->
+		      <div class="modal-content">
+		        <div class="modal-header">
+		           <a href="/admin/surveys" class="close">&times</a>
+		          <h4 id="modal-survey-title" class="modal-title">Survey Details</h4>
+		        </div>
+		        <div class="modal-body" style="max-height:450px; font-size:18px;overflow-y: scroll;">
+		          
+		          <div class="col-sm-12 space">
+		         	 <div class="col-sm-6" id="post-suvey-details">
+		          	</div>
+		          	<div class="col-sm-6">
+		          		<p>Survey End Date</p>
+			            <input  type="datetime-local" id='datepicker' />
+			      	 </div>
+			       </div>
+			       <div class="col-sm-12 space">
+		          		<span class="col-sm-6">
+		          			<b>Rater :</b>
+		          			<b id="game-question"></b>
+		          		</span>
+		          		
+			            <span class="col-sm-6"><input id="rater-val" type="text"  /></span>
+			       </div>
+		        </div>
+		        <div class="modal-footer" style="text-align:center">
+		          <button type="button" id="publish-survey" class="btn btn-danger">Post Survey</button>
 		        </div>
 		      </div>
 		      

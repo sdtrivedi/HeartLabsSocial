@@ -33,7 +33,7 @@
 	}
 	
 </style>
-<script>
+<script th:inline="javascript">
 			
 		$(document).ready(function() {
 			
@@ -82,6 +82,11 @@
 				   
 				  
 			});
+			
+			var pendingSurveysSize = [[${publishedSurveys.size()}]];
+			if(pendingSurveysSize>0){
+			 	$('#pending-survey-modal').modal({backdrop: 'static', keyboard: false})
+			}
 		});
 </script>
 </head>
@@ -140,7 +145,7 @@
 									<span th:utext="${message.messageContent}"></span>
 								</div>
 								<div >
-									 <span>Sent date :</span> <span  th:text="${#dates.format(message.sentTimeStamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+									 <span>Sent date :</span> <span  th:text="${#dates.format(message.sentTimeStamp, 'HH:mm a dd-MMM-yyyy')}"></span>
 								</div>
 							</div>
 						</div>
@@ -194,7 +199,7 @@
 						  			<input type="hidden" class="postid" name="postid"  th:value="${post.postId}"/>
 						  		</div>
 							 	<div >
-							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm  dd-MMM-yyyy')}"></span>
+							 		<span>Posted date :</span> <span  th:text="${#dates.format(post.timestamp, 'HH:mm a dd-MMM-yyyy')}"></span>
 							 	</div>
 						 	
 						 	</div>
@@ -203,7 +208,39 @@
 				</div>
 			</div>
 		</div>
-		</div>
+	</div>
+
+	<div id="pending-survey-modal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Pending Surveys</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div  class="col-sm-12 well" th:each="publishedSurvey,itr  : ${publishedSurveys}">
+				<div class="co-sm-12">
+					<b>Survey Title: </b><span th:text="${publishedSurvey.surveyTitle}"></span>
+				</div>
+				
+				<div class="co-sm-12">
+					<b>Survey End Date: </b><span th:text="${publishedSurvey.endsAt}"></span>
+				</div>
+				<div class="co-sm-12">
+					
+					<a th:href="@{/user/takesurvey(publishedSurveyId=${publishedSurvey.id})}">Click Here to Take the Survey</a>
+					
+				</div>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	
+	  </div>
 	</div>
 </body>
 </html>

@@ -25,12 +25,16 @@ public class SurveyResponse {
 	@Column(name = "survey_response_id")
 	private int surveyResponseId;
 	
+	@Column(name = "survey_published_id")
+	private int publishedSurveyId;
+	
 	@Column(name = "survey_id")
 	private int surveyId;
 	
 	@Column(name = "user_id")
 	private int userId;
 	
+
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name = "survey_answer_table", joinColumns = @JoinColumn(name = "survey_response_id"), inverseJoinColumns = @JoinColumn(name = "answer_id"))
 	private List<Answer> surveyAnswers;
@@ -42,6 +46,7 @@ public class SurveyResponse {
 	{
 		submittedDate = new Timestamp(System.currentTimeMillis());
 	}
+	
 	public int getSurveyId() {
 		return surveyId;
 	}
@@ -75,6 +80,12 @@ public class SurveyResponse {
 
 	public void setSurveyAnswers(List<Answer> surveyAnswers) {
 		this.surveyAnswers = surveyAnswers;
+	}
+	public int getPublishedSurveyId() {
+		return publishedSurveyId;
+	}
+	public void setPublishedSurveyId(int publishedSurveyId) {
+		this.publishedSurveyId = publishedSurveyId;
 	}
 	
 	

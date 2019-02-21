@@ -22,9 +22,7 @@ public class Answer{
 	@Column(name = "response")
 	private String response;
 	
-	public Question getQuestion() {
-		return question;
-	}
+	
 	public void setQuestion(Question question) {
 		this.question = question;
 	}
@@ -41,6 +39,8 @@ public class Answer{
 	public void setResponse(String response) {
 		this.response = response;
 	}
-	
+	public Question getQuestion() {
+		return question;
+	}
 	
 }

@@ -42,17 +42,15 @@ public class Post {
 	private User postedBy;
 	
 	private String displayTime;
+	
 	public Post()
 	{
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.status = 1;
 		this.link = 1;
 		this.displayTime = "1 month ago";
-		
-		
+				
 	}
-
-
 	public String getDisplayTime() {
 		return displayTime;
 	}
@@ -71,21 +69,14 @@ public class Post {
 		this.link = link;
 	}
 
-	
-
 
 	public User getPostedBy() {
 		return postedBy;
 	}
 
-
 	public void setPostedBy(User postedBy) {
 		this.postedBy = postedBy;
 	}
-
-
-
-
 
 	public int getPostId() {
 		return postId;

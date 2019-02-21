@@ -46,17 +46,19 @@ public class Message {
 	@Column(name = "type")
 	private int type;
 	
+	
+	public Message()
+	{
+		this.sentTimeStamp = new Timestamp(System.currentTimeMillis());
+		this.status = 1;
+	}
 	public int getType() {
 		return type;
 	}
 	public void setType(int type) {
 		this.type = type;
 	}
-	public Message()
-	{
-		this.sentTimeStamp = new Timestamp(System.currentTimeMillis());
-		this.status = 1;
-	}
+	
 	public int getMessageId() {
 		return messageId;
 	}

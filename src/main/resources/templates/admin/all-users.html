@@ -111,7 +111,7 @@
 										<tr th:each="usermood,itr  : ${lastTenMoods}">
 											<td th:text="${usermood.moodTitle}"></td>
 											<td th:text="${usermood.rating}"></td>
-											<td th:text="${#dates.format(usermood.timestamp, 'HH:mm  dd-MMM-yyyy')}"></td>
+											<td th:text="${#dates.format(usermood.timestamp, 'HH:mm a dd-MMM-yyyy')}"></td>
 											
 										</tr>
 									</table>
@@ -123,6 +123,9 @@
 				<div th:if="${viewname=='users'}">
 				
 					<div class="panel panel-info" >
+						<div class="panel-heading">
+							<span><a th:href="@{/admin/userdetailcsv}" class="btn btn-md btn-primary">Export CSV</a></span>
+						</div>
 						<div class="panel-heading">
 							<span>Current User List</span>
 						</div>

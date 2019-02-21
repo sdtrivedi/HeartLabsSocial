@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+
 import edu.asu.psy.models.Role;
 import edu.asu.psy.models.User;
 import edu.asu.psy.models.UserCredit;
@@ -37,6 +39,7 @@ public class LoginController {
 	@RequestMapping(value={"/heart-lab","/"}, method = RequestMethod.GET)
 	public ModelAndView landingPage(){
 		
+		// Landing Page View
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
 		User user = new User();
@@ -47,6 +50,8 @@ public class LoginController {
 	@RequestMapping(value={"/heart-lab/mission"}, method = RequestMethod.GET)
 	public ModelAndView missionPage(){
 		
+		// Mission Page View
+		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("mission");
 		User user = new User();
@@ -56,7 +61,7 @@ public class LoginController {
 	
 	@RequestMapping(value={"/heart-lab/team"}, method = RequestMethod.GET)
 	public ModelAndView teamPage(){
-		
+		// Team Page View
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("team");
 		User user = new User();
@@ -65,7 +70,7 @@ public class LoginController {
 	}
 	@RequestMapping(value={"/heart-lab/research"}, method = RequestMethod.GET)
 	public ModelAndView researchPage(){
-		
+		// Research Page View
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("research");
 		User user = new User();
@@ -75,6 +80,8 @@ public class LoginController {
 	@RequestMapping(value={"/heart-lab/participate"}, method = RequestMethod.GET)
 	public ModelAndView participationPage(){
 		
+		// Participation Page View
+		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("participate");
 		User user = new User();
@@ -83,6 +90,9 @@ public class LoginController {
 	}
 	@RequestMapping(value="/registration", method = RequestMethod.GET)
 	public ModelAndView registration(){
+		
+		// Registration Page View
+		
 		ModelAndView modelAndView = new ModelAndView();
 		User user = new User();
 		modelAndView.addObject("user", user);
@@ -93,6 +103,8 @@ public class LoginController {
 	
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+		// Create User
+		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("page", "registration");
 		User userExists = userService.findUserByEmail(user.getEmail());
@@ -115,7 +127,7 @@ public class LoginController {
 	
 	@RequestMapping(value="/getUserMood", method = RequestMethod.GET)
 	public ModelAndView redirectToMood(){
-		
+		// Re
 		User user = getCurrentUser();
 		UserCredit userCredit = userService.findUserCreditByUserId(user.getId());
 		if(userCredit==null)
@@ -145,6 +157,8 @@ public class LoginController {
 	
 	@RequestMapping(value="/dashboard", method = RequestMethod.GET)
 	public ModelAndView dashboard(){
+		
+		// Redirect to homepage
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
@@ -178,6 +192,8 @@ public class LoginController {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
 			UserMood userMood = new UserMood(moodTitle, rating);
+			
+			
 			userService.saveUserMood(userMood, auth.getName());
 			return new ModelAndView("redirect:/dashboard");
 	}

@@ -1,13 +1,29 @@
 package edu.asu.psy.resources;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,10 +41,14 @@ import com.google.gson.Gson;
 import edu.asu.psy.models.Role;
 import edu.asu.psy.models.User;
 import edu.asu.psy.models.Survey;
+import edu.asu.psy.models.SurveyResponse;
 import edu.asu.psy.models.UserCredit;
 import edu.asu.psy.models.UserMood;
+import edu.asu.psy.models.Answer;
 import edu.asu.psy.models.Message;
 import edu.asu.psy.models.Post;
+import edu.asu.psy.models.PublishedSurvey;
+import edu.asu.psy.service.PostAndMessageService;
 import edu.asu.psy.service.SurveyService;
 import edu.asu.psy.service.UserService;
 
@@ -42,10 +62,13 @@ public class AdminController {
 	private SurveyService surveyService;
 	@Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+    private PostAndMessageService postAndMessageService;
 
 	@GetMapping("/home")
 	public ModelAndView adminHomePage()
 	{
+		// HomePage View
 		
 		ModelAndView modelAndView = new ModelAndView();
 		
@@ -53,7 +76,7 @@ public class AdminController {
 		
 		modelAndView.addObject("currentUser", user);
 		
-		List<Post> last20 = userService.retrieveRecentPosts(0, 20);
+		List<Post> last20 = postAndMessageService.retrieveRecentPosts(0, 20);
 /*		for(int i =0; i< last20.size(); i++)
 		{
 			int userId = last20.get(i).getUserId();
@@ -73,17 +96,20 @@ public class AdminController {
 	@GetMapping("/announcement")
 	public ModelAndView announcementPage()
 	{
+		// Fetch announcements
 		ModelAndView modelAndView = new ModelAndView();
 		User user = getCurrentUser();
 		
 		modelAndView.addObject("currentUser", user);
-		modelAndView.addObject("previousAnnoucements", userService.findBySenderId(user.getId()));
+		modelAndView.addObject("previousAnnoucements", postAndMessageService.findBySenderId(user.getId()));
 		modelAndView.setViewName("admin/announcement");
 		return modelAndView;
 	}
 	@GetMapping("/profile")
 	public ModelAndView profilePage()
 	{
+		// Profile Page View
+		
 		ModelAndView modelAndView = new ModelAndView();
 		User user = getCurrentUser();
 	
@@ -95,7 +121,7 @@ public class AdminController {
 	@RequestMapping(value="/profile", method = RequestMethod.POST)
 	public ModelAndView updateProfile(User currentUser)
 	{
-		
+		// Updated Profile View
 	
 		User user = getCurrentUser();
 		user.setName(currentUser.getName());
@@ -106,10 +132,142 @@ public class AdminController {
 		return profilePage();
 	}
 	
+	@RequestMapping(value="/surveyresponsedetails", method = RequestMethod.GET)
+	public ModelAndView SurveyResponsePage(@RequestParam("publishId") int publishId)
+	{
+		// Survey Response View Page
+		
+		ModelAndView modelAndView = new ModelAndView();
+		User currentUser = getCurrentUser();
 	
+		List<SurveyResponse> surveyResponses = surveyService.findSurveyResponseByPublishId(publishId);
+		
+		Map<String, SurveyResponse> map = new HashMap<String, SurveyResponse>();
+		
+		boolean flag = true;
+		for(SurveyResponse surveyResponse:surveyResponses )
+		{
+			
+			int userId = surveyResponse.getUserId();
+			User user = userService.findUserById(userId);
+			String name = user.getName()+" "+user.getLastName();
+			if(flag)
+			{
+				map.put("th", surveyResponse);
+				flag = false;
+			}
+			map.put(name, surveyResponse);
+		}
+		
+		modelAndView.addObject("publishedSurveyId", publishId);
+		modelAndView.addObject("currentUser", currentUser);
+		modelAndView.addObject("userCredit",  userService.findUserCreditByUserId(currentUser.getId()));
+		modelAndView.addObject("surveyResponses",map);
+		modelAndView.setViewName("admin/surveyresponse");
+		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/userdetailcsv", method = RequestMethod.GET)
+	public void downloadUserDetailCSVFile(HttpServletResponse response){
+		String csvFileName = "userList.csv";
+		response.setContentType("text/csv");
+		String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"",
+                csvFileName);
+        response.setHeader(headerKey, headerValue);
+        try{
+			List <User> users = userService.getAllUsers();
+			response.getWriter().write("FirstName,");
+			response.getWriter().write("LastName,");
+			response.getWriter().write("Email,\n");
+			for(User user:users){
+				
+				response.getWriter().write(user.getName()+ ",");
+				response.getWriter().write(user.getLastName() + ",");
+				response.getWriter().write(user.getEmail() + ",\n");
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		finally {
+	        
+	           
+            try {
+				response.getWriter().close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }
+	}
+	
+	@RequestMapping(value="/surveyresponsedetailscsv", method = RequestMethod.GET)
+	public  void downloadSurveyResponseCSVFile(@RequestParam("publishId") int publishId,HttpServletResponse response) throws FileNotFoundException
+	{
+	
+		Survey publishedSurvey = surveyService.findSurvey(surveyService.findPublishedById(publishId).getSurveyId());
+		response.setHeader("Content-Disposition","attachment; filename="+publishedSurvey.getTitle()+".csv");
+        try {
+        	
+        	
+        	
+        	List<SurveyResponse> surveyResponses = surveyService.findSurveyResponseByPublishId(publishId);
+    		
+        	boolean flag = true;
+        	String answers = "";
+    		for(SurveyResponse surveyResponse:surveyResponses )
+    		{ 
+    		
+    			if(flag)
+    			{
+    				String columns ="Full Name,";
+    				for(Answer ans: surveyResponse.getSurveyAnswers())
+        			{
+        				
+    					columns+= ans.getQuestion().getQuestion()+",";
+        			}
+    				flag = false;
+    				columns+="\n";
+					response.getWriter().write(columns);
+    			}	
+    			int userId = surveyResponse.getUserId();
+    			User user = userService.findUserById(userId);
+    			String name = user.getName()+" "+user.getLastName();
+    			
+    			answers = name+",";
+    			for(Answer ans: surveyResponse.getSurveyAnswers())
+    			{
+    				
+    				answers+= ans.getResponse()+" ,";
+    			}
+    			answers+="\n";
+    			response.getWriter().write(answers);
+    		
+        	
+    		} 
+        }catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
+        finally {
+        
+           
+                try {
+					response.getWriter().close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        }
+		
+	}
 	@GetMapping("/surveys")
 	public ModelAndView surveyPage()
 	{
+		// Survey View
+		
 		ModelAndView modelAndView = new ModelAndView();
 		User user = getCurrentUser();
 	
@@ -119,6 +277,10 @@ public class AdminController {
 		System.out.println(new Gson().toJson(surveyService.findSurveyResponse(5)));
 		
 		Collections.reverse(surveys);
+		
+		modelAndView.addObject("currentPublishedSurveys", surveyService.findAllCurrentPublishedSurveys());
+		modelAndView.addObject("oldPublishedSurveys", surveyService.findAllOldPublishedSurveys());
+		
 		modelAndView.addObject("surveys", surveys);
 		modelAndView.addObject("currentUser", user);
 		modelAndView.addObject("userCredit",  userService.findUserCreditByUserId(user.getId()));
@@ -128,24 +290,51 @@ public class AdminController {
 	@PostMapping("/savesurvey")
 	public ModelAndView saveSurvey(@RequestParam("survey") String surveyString)
 	{
-		try {
-		System.out.println("...."+surveyString);
-		Gson g = new Gson();
-		Survey s = g.fromJson(surveyString, Survey.class);
-
-		System.out.println("...."+g.toJson(s));	
+		// Save survey
 		
-		surveyService.saveSurvey(s);
+		try {
+		
+		Gson gson = new Gson();
+		Survey survey = gson.fromJson(surveyString, Survey.class);
+		survey.setStatus(0);
+		
+		surveyService.saveSurvey(survey);
 		}catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		return surveyPage();
 	}
+	@PostMapping("/deletesurvey")
+	public void deleteSurvey(@RequestParam("surveyId") int surveyId)
+	{
+		// Delete existing Survey
+		surveyService.deleteSurvey(surveyId);
+	
+	}
+	@PostMapping("/publishsurvey")
+	public void publishSurvey(@RequestParam("surveyId") int surveyId,@RequestParam("endDate") String endDate, @RequestParam("questionId") int questionId, @RequestParam("questionVal") int questionVal)
+	{
+		// Publish Survey
+	
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+		Date date;
+		try {
+			date = simpleDateFormat.parse(endDate);	
+			PublishedSurvey p = new PublishedSurvey(surveyId,surveyService.findSurvey(surveyId).getTitle(), new java.sql.Timestamp(date.getTime()));
+			p.setQuestionId(questionId);
+			p.setQuestionVal(questionVal);
+			surveyService.savePublishedSurvey(p);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	
+	}
 	@GetMapping("/fetchsurvey")
 	public String fetchSurvey(@RequestParam("id") int id)
 	{
-		
+		// Fetch Survey
 		Gson g = new Gson();
 		System.out.println(g.toJson(surveyService.findSurvey(id)));
 		return g.toJson(surveyService.findSurvey(id));
@@ -153,7 +342,7 @@ public class AdminController {
 	@GetMapping("/getmood")
 	public List<UserMood> getMood()
 	{
-	
+		// Get Usermood
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 		User user = userService.findUserByEmail(auth.getName());
@@ -163,6 +352,8 @@ public class AdminController {
 	@GetMapping("/current_user")
 	public User getCurrentUser()
 	{
+		// Get Current user object
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 		User user = userService.findUserByEmail(auth.getName());
@@ -171,6 +362,7 @@ public class AdminController {
 	@GetMapping("/getUser")
 	public ModelAndView getUser(@RequestParam("userid") int userId)
 	{
+		// Get User Object
 		ModelAndView modelAndView = new ModelAndView();
 		User currentUser = getCurrentUser();
 		modelAndView.addObject("currentUser", currentUser);
@@ -190,7 +382,7 @@ public class AdminController {
 	@GetMapping("/activateUser")
 	public ModelAndView updateUser(@RequestParam("username") String username,@RequestParam("active") int active)
 	{
-		
+		// Activate/ Deactivate User
 		ModelAndView modelAndView = new ModelAndView();
 		try {
 		User currentUser = getCurrentUser();
@@ -222,6 +414,8 @@ public class AdminController {
 	@GetMapping("/all_users")
 	public ModelAndView getAllUsers()
 	{
+		// List all users
+		
 		ModelAndView modelAndView = new ModelAndView();
 		User user = getCurrentUser();
 		modelAndView.addObject("currentUser", user);
@@ -237,6 +431,7 @@ public class AdminController {
 	@RequestMapping(value="/sendMessage", method = RequestMethod.POST)
 	public ModelAndView sendMessage(@RequestParam("senderid") int senderId, @RequestParam("receiverid") int receiverId, @RequestParam("message") String message )
 	{
+		// Save Personal message or announcement
 		try {
 		if(receiverId ==-1)
 		{
@@ -246,7 +441,7 @@ public class AdminController {
 			msg.setSender(new User(senderId));
 			msg.setMessageContent(message);
 			msg.setType(1);
-			userService.sendMessage(msg);
+			postAndMessageService.sendMessage(msg);
 			Gson gson = new Gson();
 			System.out.println(gson.toJson(msg));
 			return announcementPage();
@@ -263,7 +458,7 @@ public class AdminController {
 			
 			Gson gson = new Gson();
 			System.out.println(gson.toJson(msg));
-			userService.sendMessage(msg);
+			postAndMessageService.sendMessage(msg);
 		}
 		
 		}
@@ -271,13 +466,14 @@ public class AdminController {
 		{
 			e.printStackTrace();
 		}
-		System.out.println(senderId+" "+receiverId+" "+message);
+		
 		return getAllUsers();
 	}
 	
 	@RequestMapping(value="/sumbitPost", method = RequestMethod.POST)
 	public ModelAndView submitPost(@RequestParam("userid") int userId, @RequestParam("video_link") String videoLink, @RequestParam("message") String postContent )
 	{
+		// Save Post
 		try {
 		Post post = new Post();
 		if(videoLink!=null && videoLink.length()!=0)
@@ -307,7 +503,7 @@ public class AdminController {
 		post.setPostedBy(new User(userId));
 		
 		
-		userService.savePost(post);;
+		postAndMessageService.savePost(post);;
 		}
 		catch(Exception e)
 		{
@@ -324,15 +520,16 @@ public class AdminController {
 	@RequestMapping(value="/deletePost", method = RequestMethod.GET)
 	public ModelAndView deletePost(@RequestParam("postid") int postId)
 	{
-		System.out.println("......."+postId);
-		userService.deletePost(postId);
+		// Delete Post
+		
+		postAndMessageService.deletePost(postId);
 		return adminHomePage();
 	}
 	
 	@RequestMapping(value="/updatePassword", method = RequestMethod.POST)
 	public String updatePassword(@RequestParam("currPass") String currPass, @RequestParam("newPass") String newPass)
 	{
-		
+		// Update Password 
 		String response = "";
 		try {
 		User currentUser = getCurrentUser();

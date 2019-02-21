@@ -18,25 +18,11 @@ public interface UserService {
 	public List<User> findUserByName(String firstName, String lastName);
 	public void updateUser(User user);
 	
-	
-	public User findUserById(int userId);
-	
+	public User findUserById(int userId);	
 	
 	public void saveUserMood(UserMood userMood,String email);
 	public List<UserMood> findUserMoodsByUserId(int userId);
 	public UserMood findUserMoodByid(int userId);
-	
-	
-	public void sendMessage(Message message);
-	public void sendMessage(List<Message> messages);
-	public List<Message> findByReceiverId(int userId);
-	public List<Message> findBySenderId(int userId);
-	public Message findByMessageId(int messageId);
-	
-	public void savePost(Post post);
-	public List<Post> retrieveRecentPosts(int offset, int limit);
-	public void deletePost(int postId);
-	
 	
 	public void saveUserCredit(UserCredit userCredit);
 	public void updateUserCredit(UserCredit userCredit);

@@ -12,4 +12,6 @@ public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, 
 
 	List<SurveyResponse> findSurveyResponseBySurveyId(int surveyId);
 
+	List<SurveyResponse> findSurveyResponseByPublishedSurveyId(int publishId);
+
 }

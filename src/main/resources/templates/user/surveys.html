@@ -12,12 +12,6 @@
 
 <style>
 
-		.containe  {
-	    position: relative;
-	    width: 100%;
-	    max-width: 400px;
-	}
-	
 
 	
 </style>	  
@@ -28,10 +22,16 @@
 	$(document).ready(function(){
 	/*<![CDATA[*/
 	
-		   
+		    var publishedSurvey_Id = [[${publishedSurveyId}]];
+		    var publishedSurvey = [[${publishedSurvey}]];
 		    var survey = [[${survey}]];
-		    var surveyObj = JSON.parse(survey);	    
+		    var surveyObj = JSON.parse(survey);
+		   
 	/*]]>*/    
+			var gameRedirectQuestionId =publishedSurvey.questionId;
+			var gameRedirectQuestionVal = publishedSurvey.questionVal;
+			var selectedVal=0;
+			
 	        console.log(surveyObj);
 	
 			$('#survey-title').text(surveyObj.title);
@@ -68,14 +68,14 @@
 		   				}
 		   				if(type==3)
 		   				{
-		   					
+		   					var mid = (questions[i].options[0].content + questions[i].options[1].content)/2;
 		   					optn+='<div class="col-sm-12"><span>Min : '+questions[i].options[0].content+'</span><span class="pull-right">Max : '+questions[i].options[1].content+'</span></div>';
-							optn+='<input id="qst'+questions[i].questionId+'" class="space" type="range" min="'+questions[i].options[0].content+'" max="'+questions[i].options[1].content+'" step="1" value="3" data-orientation="vertical">';
+							optn+='<input id="qst'+questions[i].questionId+'" class="space" type="range" min="'+questions[i].options[0].content+'" max="'+questions[i].options[1].content+'" step="1" value="'+mid+'" data-orientation="vertical">';
 		   				}
 		   				if(type==4)
 		   				{
 		   					
-		   					optn+='<div><textarea id="qst'+questions[i].questionId+'" rows="3" cols="45" placeholder="'+questions[i].options[0].content+'"></textarea></div>';
+		   					optn+='<textarea id="qst'+questions[i].questionId+'" rows="3" cols="45" placeholder="'+questions[i].options[0].content+'"></textarea>';
 		   					
 		   				}
 		   				optn+='</div>';
@@ -91,59 +91,87 @@
 		    $('#submit-survey').click(function(){
 		    	var questions = surveyObj.questions;
 		    	var surveyAnswers =[];
-		    	
+		    	console.log(questions);
 		    	for(var i =0; i< questions.length; i++)
 	   			{
 		    		var response ={};
+		    		var answer ='';
 		    		if(questions[i].type==1)
 		    			{
-		    			var answer='';
-		    			$("#qst"+questions[i].questionId+" input[type='radio']:checked").each(function(){
-				    		
-		    				answer+=$(this).val();
-					    });
 		    			
+		    			$("#qst"+questions[i].questionId+" input[type='radio']:checked").each(function(){
+				    		var id = parseInt($(this).val());
+		    				answer+=questions[i].options[id].content;
+					    });
+		    		
 		    			response = {"question":questions[i],"response":answer};
 		    			}
 		    		else if(questions[i].type==2)
 	    			{
 		    			
-		    			var answer='';
+		    			
 		    			$("#qst"+questions[i].questionId+" input[type='checkbox']:checked").each(function(){
-				    		
-		    				answer+=$(this).val()+',';
+		    				var id = parseInt($(this).val());
+		    				answer+=questions[i].options[id].content;
+		    				
 					    });
+		    		
 		    			answer = answer.substring(0,answer.length-1);
 		    			response = {"question":questions[i],"response":answer};
 	    			}
 		    		else if(questions[i].type==3)
 	    			{
 		    			
-		    			var answer= '';
-		    			answer+=$("#qst"+questions[i].questionId).val();
+		    			if(gameRedirectQuestionId == questions[i].questionId)
+		    				{
+		    					selectedVal=$("#qst"+questions[i].questionId).val();
+		    				}
+		    			
+		    			answer+=$("#qst"+questions[i].questionId).val()+'/('+questions[i].options[1].content+')';
 		    			response = {"question":questions[i],"response":answer};
 	    			}
 		    		else if(questions[i].type==4)
 	    			{
-		    			var answer='';
+		    			    			
 		    			answer+=$("#qst"+questions[i].questionId).val();
+		    			
 		    			response = {"question":questions[i],"response":answer};
+		    			    			
+	    			}
+		    		
+		    		// Empty Check
+		    		if(answer=='')
+	    			{
+	    				$("#qst"+questions[i].questionId).focus();
+	    				$("#qst"+questions[i].questionId).parent().parent().css("border", "1px solid red ");
+	    				return;	
+	    			}
+	    			else
+	    			{
+	    				$("#qst"+questions[i].questionId).parent().parent().css("border", "");
 	    			}
 		    		
 		    		surveyAnswers.push(response);
 	   			}
 		    	
 		    	var surveyResponse = {"surveyId":surveyObj.surveyId,"surveyAnswers":surveyAnswers};
-		    	console.log(surveyResponse);
+		    	console.log(surveyResponse); 	
 		    	
-		    	
-		    	$.post("/user/savesurveyresponse",
+ 				$.post("/user/savesurveyresponse",
 			            {
-			              response :  JSON.stringify(surveyResponse)
-			          
+			              response :  JSON.stringify(surveyResponse),
+			              publishedSurveyId: publishedSurvey_Id
 			            }).done(function(res) {
 			            	alert('Survey Responses Saved ');
-			            }); 
+			            	if(selectedVal < gameRedirectQuestionVal)
+					    	{
+					    		window.location.href = '/heart-lab/participate';
+					    	}
+			            	else
+			            		window.location.href = '/user/home';
+			            });   
+			            
+		    	
 		    });
 	});
 </script>

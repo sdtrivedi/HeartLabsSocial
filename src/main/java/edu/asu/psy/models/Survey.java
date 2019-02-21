@@ -25,6 +25,9 @@ public class Survey {
 	@Column(name = "survey_id")
 	private int surveyId;
 	
+	@Column(name = "status")
+	private int status;
+	
 	@Column(name = "title")
 	private String title;
 	
@@ -38,7 +41,7 @@ public class Survey {
 	@Column(name = "updated_at")
 	private Timestamp updatedAt;
 	
-	private Survey() {
+	public Survey() {
 		
 		this.createdAt = new Timestamp(System.currentTimeMillis());
 		this.updatedAt = new Timestamp(System.currentTimeMillis());
@@ -79,6 +82,14 @@ public class Survey {
 	}
 	public void setQuestions(List<Question> questions) {
 		this.questions = questions;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

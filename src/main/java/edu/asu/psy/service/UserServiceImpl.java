@@ -39,15 +39,10 @@ public class UserServiceImpl implements UserService{
 	@Autowired
     private RoleRepository roleRepository;
 	@Autowired
-    private MessageRepository messageRepository;
-	@Autowired
-    private PostRepository postRepository;
-	@Autowired
     private UserCreditRepository userCreditRepository;
-    @Autowired
+    
+	@Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-   
-  
 	@Override
 	public User findUserByEmail(String email) {
 		
@@ -61,11 +56,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void saveUser(User user) {
 		
-		/*user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setActive(1);
         Role userRole = roleRepository.findByRole("USER");
-        //user.setRoles(Arrays.asList(userRole));
-*/		userRepository.save(user);
+        user.setRoles(Arrays.asList(userRole));
+		userRepository.save(user);
 		
 	}
 	@Override
@@ -126,59 +121,7 @@ public class UserServiceImpl implements UserService{
 		return userRepository.findUsersByFirstAndLastName(firstName, lastName);
 	}
 
-	@Override
-	public void sendMessage(Message message) {
-		// TODO Auto-generated method stub
-		messageRepository.save(message);
-		
-	}
-
-	@Override
-	public void sendMessage(List<Message> messages) {
-		// TODO Auto-generated method stub
-		messageRepository.save(messages);
-		
-	}
 	
-	@Override
-	public List<Message> findByReceiverId(int userId) {
-		// TODO Auto-generated method stub
-		return messageRepository.findByReceiverId(userId);
-	}
-	@Override
-	public Message findByMessageId(int messageId)
-	{
-		return messageRepository.findByMessageId(messageId);
-	}
-	@Override
-	public void savePost(Post post) {
-		// TODO Auto-generated method stub
-		postRepository.save(post);
-		
-		
-		
-	}
-
-	@Override
-	public List<Post> retrieveRecentPosts(int offset, int limit) {
-		// TODO Auto-generated method stub
-		return postRepository.retrieveRecentPosts(offset, limit);
-	}
-
-	@Override
-	public void deletePost(int postId) {
-		// TODO Auto-generated method stub
-		
-		postRepository.updatePost(postId);
-		
-	}
-
-	@Override
-	public List<Message> findBySenderId(int userId) {
-		// TODO Auto-generated method stub
-		return messageRepository.findBySenderId(userId);
-	}
-
 	@Override
 	public void saveUserCredit(UserCredit userCredit) {
 		// TODO Auto-generated method stub
@@ -199,11 +142,5 @@ public class UserServiceImpl implements UserService{
 		return userCreditRepository.findByUserId(id);
 	}
 
-	
-
-	
-	
-
-	
 
 }

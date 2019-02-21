@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+
 
 
 @Entity
@@ -33,9 +33,9 @@ public class UserMood {
 	private int rating;
 	
 	public UserMood()
-	{
-		
+	{		
 	}
+	
 	public UserMood(String moodTitle,int rating)
 	{
 		this.moodTitle = moodTitle;

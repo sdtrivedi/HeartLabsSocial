@@ -44,16 +44,18 @@ public class Question {
 	@Column(name = "type")
 	private int type;
 	
+	private Question()
+	{
+		
+	}
+	
 	public int getQuestionId() {
 		return questionId;
 	}
 	public void setQuestionId(int questionId) {
 		this.questionId = questionId;
 	}
-	private Question()
-	{
-		
-	}
+	
 	public int getId() {
 		return id;
 	}
